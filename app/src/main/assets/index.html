@@ -1,0 +1,1672 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#070913">
+<meta name="description" content="منبه دورات النوم الذكي، بومودورو بشجرة إنجاز، ومتتبع ترطيب ذكي — يعمل بالكامل داخل المتصفح.">
+<title>إيقاع — منبه دورات النوم وبومودورو الذكي</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🧬</text></svg>">
+<style>
+@font-face{font-family:'Cairo';font-style:normal;font-weight:400 900;font-display:swap;src:url(fonts/cairo-arabic.woff2) format('woff2');unicode-range:U+0600-06FF,U+0750-077F,U+0870-08FF,U+200C-200E,U+2010-2011,U+204F,U+2E41,U+FB50-FDFF,U+FE70-FEFC}
+@font-face{font-family:'Cairo';font-style:normal;font-weight:400 900;font-display:swap;src:url(fonts/cairo-latin.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom);user-select:none;-webkit-user-select:none}
+input,textarea{user-select:text;-webkit-user-select:text}
+body.native footer{display:none}
+:root{
+  --bg:#070913; --bg-2:#0b1020;
+  --surface:rgba(17,24,39,.72); --surface-2:rgba(30,41,59,.55); --surface-3:rgba(2,6,23,.55);
+  --border:rgba(255,255,255,.08); --border-strong:rgba(255,255,255,.16);
+  --text:#f1f5f9; --muted:#94a3b8; --faint:#64748b;
+  --sky:#38bdf8; --violet:#a78bfa; --emerald:#34d399; --amber:#fbbf24; --rose:#fb7185;
+  --accent:var(--sky);
+  --radius:24px; --radius-sm:14px;
+  --shadow:0 20px 45px -20px rgba(0,0,0,.65);
+  --ease:cubic-bezier(.2,.8,.2,1);
+  color-scheme:dark;
+}
+[data-theme="light"]{
+  --bg:#eef2f8; --bg-2:#e2e8f0;
+  --surface:rgba(255,255,255,.78); --surface-2:rgba(241,245,249,.9); --surface-3:rgba(226,232,240,.7);
+  --border:rgba(15,23,42,.08); --border-strong:rgba(15,23,42,.18);
+  --text:#0f172a; --muted:#475569; --faint:#64748b;
+  --sky:#0284c7; --violet:#7c3aed; --emerald:#059669; --amber:#d97706; --rose:#e11d48;
+  --shadow:0 18px 40px -22px rgba(15,23,42,.35);
+  color-scheme:light;
+}
+*{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent}
+[hidden]{display:none!important}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Cairo',system-ui,-apple-system,'Segoe UI',Tahoma,sans-serif;
+  background:var(--bg); color:var(--text); min-height:100dvh; line-height:1.6;
+  overflow-x:hidden; transition:background .4s var(--ease),color .4s var(--ease);
+}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer;border:0;background:none}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:10px}
+.bg-orbs{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none}
+.bg-orbs span{position:absolute;width:55vmax;height:55vmax;border-radius:50%;filter:blur(90px);opacity:.16;animation:drift 22s ease-in-out infinite alternate}
+.bg-orbs span:nth-child(1){background:var(--sky);top:-25vmax;right:-15vmax}
+.bg-orbs span:nth-child(2){background:var(--violet);bottom:-25vmax;left:-15vmax;animation-delay:-8s}
+@keyframes drift{to{transform:translate(6vmax,4vmax) scale(1.1)}}
+
+.app{max-width:820px;margin-inline:auto;padding:14px 14px 40px;display:grid;gap:14px}
+.card{background:var(--surface);backdrop-filter:blur(18px) saturate(140%);-webkit-backdrop-filter:blur(18px) saturate(140%);
+  border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px;
+  transition:border-color .3s var(--ease),transform .3s var(--ease)}
+.card-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding-bottom:12px;margin-bottom:14px;border-bottom:1px solid var(--border)}
+h1{font-size:clamp(15px,2.6vw,19px);font-weight:900;letter-spacing:-.3px}
+h2{font-size:15px;font-weight:800}
+h3{font-size:13px;font-weight:800}
+.muted{color:var(--muted)} .faint{color:var(--faint)}
+.xs{font-size:11px} .sm{font-size:12.5px}
+.row{display:flex;align-items:center;gap:10px}
+.between{justify-content:space-between}
+.wrap{flex-wrap:wrap}
+.stack{display:grid;gap:12px}
+.grid-2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.grid-4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+@media (max-width:560px){.grid-4{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.tabular{font-variant-numeric:tabular-nums}
+
+/* header */
+.header{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:12px}
+.logo{width:48px;height:48px;border-radius:16px;display:grid;place-items:center;font-size:24px;
+  background:linear-gradient(135deg,color-mix(in srgb,var(--sky) 30%,transparent),color-mix(in srgb,var(--violet) 30%,transparent));
+  border:1px solid color-mix(in srgb,var(--sky) 35%,transparent);animation:float 4s ease-in-out infinite}
+@keyframes float{50%{transform:translateY(-5px)}}
+.header-side{display:flex;align-items:center;gap:8px}
+.clock-box{background:var(--surface-3);border:1px solid var(--border);border-radius:16px;padding:6px 14px;text-align:center;min-width:128px}
+#live-clock{font-size:18px;font-weight:900;color:var(--sky);letter-spacing:.5px}
+.icon-btn{width:42px;height:42px;border-radius:14px;display:grid;place-items:center;font-size:18px;background:var(--surface-2);border:1px solid var(--border);transition:.25s var(--ease)}
+.icon-btn:hover{border-color:var(--accent);transform:translateY(-2px)}
+.icon-btn.on{border-color:color-mix(in srgb,var(--emerald) 60%,transparent);box-shadow:0 0 0 3px color-mix(in srgb,var(--emerald) 18%,transparent)}
+
+/* insight */
+.insight{display:flex;align-items:center;gap:12px;padding:12px 16px;border-color:color-mix(in srgb,var(--violet) 30%,var(--border))}
+.insight-ico{font-size:22px;flex-shrink:0}
+.insight p{font-size:12px;color:var(--muted)}
+.insight b{font-size:13px}
+.insight>div{flex:1;min-width:0}
+
+/* tabs */
+.tabs{position:relative;display:grid;grid-template-columns:repeat(4,1fr);gap:4px;padding:5px;border-radius:20px;background:var(--surface-3);border:1px solid var(--border);backdrop-filter:blur(12px)}
+.tabs button{position:relative;z-index:1;padding:11px 6px;border-radius:15px;font-weight:800;font-size:13px;color:var(--muted);transition:color .3s var(--ease)}
+.tabs button[aria-selected="true"]{color:#04121f}
+[data-theme="light"] .tabs button[aria-selected="true"]{color:#fff}
+.tab-indicator{position:absolute;top:5px;bottom:5px;width:calc((100% - 10px - 12px)/4);right:calc(5px + var(--i,0) * ((100% - 10px - 12px)/4 + 4px));
+  border-radius:15px;background:var(--tab-color,var(--sky));box-shadow:0 8px 22px -8px var(--tab-color,var(--sky));transition:right .45s var(--ease),background .45s var(--ease)}
+@media (max-width:420px){.tabs button span{display:block;font-size:11px}}
+
+.panel{display:grid;gap:14px;animation:fadeUp .45s var(--ease)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:11px 16px;border-radius:var(--radius-sm);font-weight:800;font-size:13px;border:1px solid var(--border);background:var(--surface-2);transition:transform .2s var(--ease),background .2s,border-color .2s,box-shadow .2s;white-space:nowrap}
+.btn:hover{transform:translateY(-2px);border-color:var(--border-strong)}
+.btn:active{transform:translateY(0) scale(.98)}
+.btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
+.btn.primary{background:var(--accent);color:#04121f;border-color:transparent;box-shadow:0 10px 24px -12px var(--accent)}
+[data-theme="light"] .btn.primary{color:#fff}
+.btn.emerald{--accent:var(--emerald)} .btn.amber{--accent:var(--amber)} .btn.violet{--accent:var(--violet)}
+.btn.soft{background:color-mix(in srgb,var(--accent) 14%,transparent);color:var(--accent);border-color:color-mix(in srgb,var(--accent) 30%,transparent)}
+.btn.danger{background:color-mix(in srgb,var(--rose) 14%,transparent);color:var(--rose);border-color:color-mix(in srgb,var(--rose) 30%,transparent)}
+.btn.sm{padding:7px 11px;font-size:11.5px;border-radius:11px}
+.btn.lg{padding:15px 20px;font-size:15px;border-radius:18px}
+.btn.block{width:100%}
+.link{color:var(--sky);font-weight:700;font-size:12px;text-decoration:underline;text-underline-offset:3px}
+
+/* segmented */
+.seg{display:inline-grid;grid-auto-flow:column;gap:3px;padding:4px;border-radius:14px;background:var(--surface-3);border:1px solid var(--border)}
+.seg button{padding:7px 12px;border-radius:10px;font-size:12px;font-weight:800;color:var(--muted);transition:.25s var(--ease)}
+.seg button[aria-pressed="true"]{background:var(--surface-2);color:var(--text);box-shadow:0 2px 10px -4px rgba(0,0,0,.5);outline:1px solid var(--border-strong)}
+
+/* fields */
+.field{display:grid;gap:5px}
+.field label,.label{font-size:11px;color:var(--muted);font-weight:700}
+.input{width:100%;background:var(--surface-3);border:1px solid var(--border);border-radius:12px;padding:9px 12px;font-size:13px;font-weight:800;text-align:center;transition:border-color .2s}
+.input:focus{outline:none;border-color:var(--accent)}
+select.input{text-align:right;cursor:pointer}
+.panel-box{background:var(--surface-3);border:1px solid var(--border);border-radius:18px;padding:14px}
+
+/* range */
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:6px;border-radius:99px;background:linear-gradient(to left,var(--accent) var(--p,50%),var(--border-strong) var(--p,50%));cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:#fff;border:3px solid var(--accent);box-shadow:0 0 12px color-mix(in srgb,var(--accent) 60%,transparent)}
+input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;background:#fff;border:3px solid var(--accent)}
+
+/* switch */
+.switch{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0;cursor:pointer}
+.switch input{appearance:none;-webkit-appearance:none;flex-shrink:0;width:42px;height:24px;border-radius:99px;background:var(--border-strong);position:relative;transition:background .25s;cursor:pointer}
+.switch input::after{content:"";position:absolute;top:3px;right:3px;width:18px;height:18px;border-radius:50%;background:#fff;transition:transform .25s var(--ease)}
+.switch input:checked{background:var(--emerald)}
+.switch input:checked::after{transform:translateX(-18px)}
+.switch .t{font-size:12.5px;font-weight:700}
+.switch .d{font-size:11px;color:var(--muted)}
+
+/* progress */
+.track{height:8px;border-radius:99px;background:var(--border);overflow:hidden}
+.fill{height:100%;border-radius:99px;background:var(--accent);transition:width .6s var(--ease)}
+.badge{display:inline-flex;align-items:center;gap:6px;padding:4px 11px;border-radius:99px;font-size:11px;font-weight:800;background:color-mix(in srgb,var(--accent) 15%,transparent);color:var(--accent);border:1px solid color-mix(in srgb,var(--accent) 30%,transparent)}
+.dot-live{width:8px;height:8px;border-radius:50%;background:var(--emerald);box-shadow:0 0 0 0 var(--emerald);animation:pulse 1.6s infinite}
+@keyframes pulse{70%{box-shadow:0 0 0 8px transparent}}
+
+/* plan cards */
+.plan-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+@media (max-width:620px){.plan-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.plan{position:relative;text-align:center;padding:16px 10px 12px;border-radius:18px;background:var(--surface-2);border:1px solid var(--border);cursor:pointer;transition:.25s var(--ease)}
+.plan:hover{transform:translateY(-3px);border-color:color-mix(in srgb,var(--sky) 50%,transparent)}
+.plan.selected{border-color:var(--sky);box-shadow:0 0 0 3px color-mix(in srgb,var(--sky) 20%,transparent),0 14px 30px -18px var(--sky)}
+.plan.disabled{opacity:.4;pointer-events:none}
+.plan .time{font-size:22px;font-weight:900;margin:2px 0}
+.plan .meta{font-size:11px;color:var(--sky);font-weight:800}
+.plan .desc{font-size:10.5px;color:var(--muted)}
+.plan .tag{position:absolute;top:-9px;right:50%;transform:translateX(50%);padding:1px 10px;border-radius:99px;font-size:10px;font-weight:900;background:var(--emerald);color:#04121f;white-space:nowrap}
+.nap-row{display:flex;gap:8px;flex-wrap:wrap}
+
+.hypno{width:100%;height:auto;display:block}
+.hypno text{font-size:10px;fill:var(--faint);font-family:inherit}
+.benefit{font-size:12.5px;line-height:1.8;color:var(--muted);border-inline-start:3px solid var(--sky);padding-inline-start:12px}
+.benefit b{color:var(--text)}
+
+/* tones */
+.tone-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.tone{padding:10px 4px;border-radius:14px;text-align:center;background:var(--surface-2);border:1px solid var(--border);transition:.25s var(--ease)}
+.tone .e{font-size:18px}
+.tone .n{font-size:10.5px;font-weight:700}
+.tone[aria-pressed="true"]{border-color:var(--sky);box-shadow:0 0 18px -4px color-mix(in srgb,var(--sky) 60%,transparent)}
+
+details.card>summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;font-weight:800;font-size:13.5px}
+details.card>summary::-webkit-details-marker{display:none}
+details.card>summary::after{content:"⌄";font-size:18px;transition:transform .3s var(--ease);color:var(--muted)}
+details.card[open]>summary::after{transform:rotate(180deg)}
+details.card[open]>summary{margin-bottom:12px}
+
+/* focus */
+.focus-stage{display:grid;justify-items:center;gap:14px;padding:22px 12px;border-radius:26px;background:var(--surface-3);border:1px solid var(--border);transition:padding .5s var(--ease),min-height .5s var(--ease)}
+.ring-wrap{position:relative;width:min(300px,78vw);aspect-ratio:1}
+.ring-wrap svg.ring{width:100%;height:100%;transform:rotate(-90deg)}
+.ring-bg{stroke:var(--border);fill:none}
+.ring-fg{fill:none;stroke-linecap:round;transition:stroke-dashoffset 1s linear,stroke .5s}
+.ring-center{position:absolute;inset:0;display:grid;place-content:center;justify-items:center;gap:2px;text-align:center}
+#tree svg{width:86px;height:86px;animation:float 4s ease-in-out infinite}
+#timer{font-size:clamp(46px,12vw,64px);font-weight:900;letter-spacing:1px;line-height:1.1}
+.dots{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;max-width:280px}
+.dots i{width:11px;height:11px;border-radius:50%;background:var(--border-strong);transition:.3s}
+.dots i.on{background:var(--emerald);box-shadow:0 0 8px var(--emerald)}
+.presets{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;width:100%;max-width:380px}
+.presets button[aria-pressed="true"]{border-color:var(--emerald);color:var(--emerald)}
+.controls{display:flex;gap:8px;width:100%;max-width:380px}
+.controls .btn.lg{flex:1}
+.tip{display:flex;gap:10px;align-items:center;max-width:420px;padding:12px 14px;border-radius:16px;background:color-mix(in srgb,var(--amber) 10%,transparent);border:1px solid color-mix(in srgb,var(--amber) 30%,transparent);font-size:12.5px}
+.tip>div{flex:1}
+body.immersive .header,body.immersive .tabs,body.immersive .insight,body.immersive .focus-extra,body.immersive footer{display:none}
+body.immersive .focus-stage{min-height:calc(100dvh - 70px);align-content:center;padding:40px 16px}
+body.immersive #focus-card{padding:10px}
+.exit-imm{display:none}
+body.immersive .exit-imm{display:inline-flex}
+
+/* water */
+.water-hero{display:grid;grid-template-columns:auto 1fr;gap:20px;align-items:center}
+@media (max-width:520px){.water-hero{grid-template-columns:1fr;justify-items:center;text-align:center}}
+.bottle{position:relative;width:130px;height:190px;border-radius:30px 30px 38px 38px;border:3px solid color-mix(in srgb,var(--sky) 45%,transparent);overflow:hidden;background:var(--surface-3)}
+.bottle::before{content:"";position:absolute;top:-3px;right:50%;transform:translateX(50%);width:54px;height:14px;border-radius:0 0 10px 10px;background:color-mix(in srgb,var(--sky) 45%,transparent);z-index:2}
+.wave{position:absolute;inset-inline:0;bottom:0;height:var(--lvl,0%);background:linear-gradient(180deg,color-mix(in srgb,var(--sky) 85%,#fff),color-mix(in srgb,var(--sky) 70%,#1e3a8a));transition:height 1s var(--ease)}
+.wave::before,.wave::after{content:"";position:absolute;top:-14px;left:-50%;width:200%;height:28px;border-radius:45%;background:inherit;animation:wave 5s linear infinite}
+.wave::after{opacity:.5;animation-duration:7s;top:-18px}
+@keyframes wave{to{transform:translateX(25%) rotate(360deg)}}
+.bottle-label{position:absolute;inset:0;display:grid;place-content:center;text-align:center;z-index:3;text-shadow:0 1px 8px rgba(0,0,0,.5);color:#fff}
+.bottle-label b{font-size:26px;font-weight:900}
+.quick{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.log{display:grid;gap:6px;max-height:220px;overflow:auto}
+.log-item{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;border-radius:12px;background:var(--surface-2);border:1px solid var(--border);font-size:12.5px;animation:fadeUp .3s var(--ease)}
+.log-item button{color:var(--faint);font-size:14px;padding:2px 6px;border-radius:8px}
+.log-item button:hover{color:var(--rose)}
+.pace{font-size:12.5px;font-weight:700;padding:8px 12px;border-radius:12px}
+.pace.ok{background:color-mix(in srgb,var(--emerald) 12%,transparent);color:var(--emerald)}
+.pace.warn{background:color-mix(in srgb,var(--amber) 12%,transparent);color:var(--amber)}
+.pace.idle{background:var(--surface-2);color:var(--muted)}
+
+/* stats */
+.kpi{padding:14px;border-radius:18px;background:var(--surface-2);border:1px solid var(--border)}
+.kpi .v{font-size:22px;font-weight:900}
+.kpi .l{font-size:11px;color:var(--muted);font-weight:700}
+.chart{width:100%;height:auto;display:block}
+.chart text{font-size:11px;fill:var(--muted);font-family:inherit}
+.empty{font-size:12px;color:var(--faint);text-align:center;padding:14px}
+
+/* dialogs */
+dialog{border:0;padding:0;background:transparent;color:var(--text);max-width:min(420px,92vw);width:100%}
+dialog::backdrop{background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(14px)}
+dialog[open]{animation:pop .35s var(--ease)}
+@keyframes pop{from{opacity:0;transform:scale(.94) translateY(10px)}}
+.dlg{background:var(--surface);border:1px solid var(--border-strong);border-radius:28px;padding:26px 22px;text-align:center;display:grid;gap:12px;box-shadow:var(--shadow);backdrop-filter:blur(20px)}
+.dlg .big{font-size:52px;line-height:1;animation:bounce 1.4s infinite}
+@keyframes bounce{50%{transform:translateY(-8px)}}
+.dlg h2{font-size:20px}
+.dlg p{font-size:13px;color:var(--muted)}
+.rate{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.rate button{padding:14px 6px;border-radius:16px;background:var(--surface-2);border:1px solid var(--border);font-weight:800;font-size:12px;transition:.2s}
+.rate button span{display:block;font-size:28px}
+.rate button:hover{border-color:var(--sky);transform:translateY(-2px)}
+.math{display:flex;gap:8px;align-items:center;justify-content:center}
+.math b{font-size:22px}
+.math input{max-width:110px}
+.shake{animation:shake .4s}
+@keyframes shake{25%{transform:translateX(6px)}75%{transform:translateX(-6px)}}
+
+/* dim overlay */
+#dim{position:fixed;inset:0;z-index:80;display:grid;place-content:center;justify-items:center;gap:6px;cursor:pointer;color:#334155;
+  background:radial-gradient(circle at 50% 110%,rgba(251,146,60,calc(var(--sun,0)*.85)),rgba(250,204,21,calc(var(--sun,0)*.35)) 45%,#000 75%);transition:background 2s linear}
+#dim-clock{font-size:clamp(48px,14vw,96px);font-weight:900;color:rgb(calc(51 + var(--sun,0)*200),calc(65 + var(--sun,0)*150),calc(85 + var(--sun,0)*60));font-variant-numeric:tabular-nums}
+
+/* toasts */
+#toasts{position:fixed;bottom:18px;inset-inline:0;z-index:120;display:grid;justify-items:center;gap:8px;pointer-events:none;padding:0 12px}
+.toast{pointer-events:auto;display:flex;align-items:center;gap:10px;max-width:440px;padding:11px 14px;border-radius:16px;background:var(--surface);backdrop-filter:blur(18px);border:1px solid var(--border-strong);box-shadow:var(--shadow);font-size:12.5px;font-weight:700;animation:fadeUp .35s var(--ease)}
+.toast.out{opacity:0;transform:translateY(10px);transition:.3s}
+
+footer{text-align:center}
+kbd{font-family:inherit;font-size:10px;padding:1px 6px;border-radius:6px;border:1px solid var(--border-strong);background:var(--surface-2)}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+
+</style>
+</head>
+<body>
+<div class="bg-orbs" aria-hidden="true"><span></span><span></span></div>
+
+<div class="app">
+  <!-- الهيدر -->
+  <header class="card header">
+    <div class="brand">
+      <div class="logo" aria-hidden="true">🧬</div>
+      <div>
+        <h1>إيقاع — مساعدك الذكي للنوم والتركيز والترطيب</h1>
+        <p id="greeting" class="xs muted">مرحباً بك</p>
+      </div>
+    </div>
+    <div class="header-side">
+      <div class="clock-box">
+        <div id="live-clock" class="tabular">--:--</div>
+        <div id="live-date" class="xs muted"></div>
+      </div>
+      <button id="notif-btn" class="icon-btn" title="تفعيل إشعارات المتصفح" aria-label="تفعيل الإشعارات">🔔</button>
+      <button id="theme-btn" class="icon-btn" title="تبديل المظهر" aria-label="تبديل المظهر">🌓</button>
+    </div>
+  </header>
+
+  <!-- شريط التوصية الذكية -->
+  <div id="insight" class="card insight" role="status" aria-live="polite">
+    <span id="insight-ico" class="insight-ico">✨</span>
+    <div><b id="insight-title">جاري التحليل…</b><p id="insight-text"></p></div>
+    <button id="insight-action" class="btn sm soft" hidden></button>
+  </div>
+
+  <!-- التبويبات -->
+  <nav class="tabs" role="tablist" aria-label="الأقسام">
+    <button role="tab" id="tab-sleep" data-tab="sleep" aria-controls="panel-sleep" aria-selected="true">🛌 <span>النوم</span></button>
+    <button role="tab" id="tab-focus" data-tab="focus" aria-controls="panel-focus" aria-selected="false">🌳 <span>التركيز</span></button>
+    <button role="tab" id="tab-water" data-tab="water" aria-controls="panel-water" aria-selected="false">💧 <span>الماء</span></button>
+    <button role="tab" id="tab-stats" data-tab="stats" aria-controls="panel-stats" aria-selected="false">📊 <span>الإحصاءات</span></button>
+    <span class="tab-indicator" aria-hidden="true"></span>
+  </nav>
+
+  <main>
+    <!-- ==================== النوم ==================== -->
+    <section id="panel-sleep" class="panel" role="tabpanel" aria-labelledby="tab-sleep">
+
+      <div id="alarm-card" class="card stack" style="border-color:color-mix(in srgb,var(--sky) 45%,transparent)" hidden>
+        <div class="row between wrap">
+          <div>
+            <span class="badge" style="--accent:var(--emerald)"><span class="dot-live"></span> المنبه الذكي نشط</span>
+            <h2 id="alarm-title" style="margin-top:6px">موعد الاستيقاظ: --:--</h2>
+            <p id="alarm-sub" class="xs muted"></p>
+          </div>
+          <div class="row">
+            <button id="dim-btn" class="btn sm">🌑 وضع الليل</button>
+            <button id="cancel-alarm-btn" class="btn sm danger">✖ إلغاء</button>
+          </div>
+        </div>
+        <div class="row between sm">
+          <span id="alarm-cycle" class="muted">الدورة 1</span>
+          <b id="alarm-countdown" class="tabular" style="color:var(--sky);font-size:18px">--:--:--</b>
+        </div>
+        <div class="track"><div id="alarm-bar" class="fill" style="width:0%"></div></div>
+        <div id="alarm-stage" class="xs muted" style="text-align:center"></div>
+        <div id="alarm-hypno"></div>
+        <p id="alarm-hint" class="xs faint" style="text-align:center">💡 أبقِ هذه الصفحة مفتوحة وموصولة بالشاحن — يعمل المنبه داخل المتصفح.</p>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <div>
+            <h2>🛌 مخطط دورات النوم الذكي</h2>
+            <p class="xs muted">يحسب أفضل أوقات الاستيقاظ بين الدورات لتستيقظ بلا خمول</p>
+          </div>
+          <div class="seg" role="group" aria-label="وضع الحساب" id="sleep-mode">
+            <button data-mode="now" aria-pressed="true">أنام الآن</button>
+            <button data-mode="bed" aria-pressed="false">أنام الساعة…</button>
+            <button data-mode="wake" aria-pressed="false">أستيقظ الساعة…</button>
+          </div>
+        </div>
+
+        <div class="stack">
+          <div id="mode-bed-row" class="row between panel-box" hidden>
+            <label for="bed-time" class="sm" style="font-weight:800">⏰ سأذهب إلى السرير الساعة:</label>
+            <input id="bed-time" type="time" class="input" style="max-width:140px" value="23:00">
+          </div>
+          <div id="mode-wake-row" class="row between panel-box" hidden>
+            <label for="wake-time" class="sm" style="font-weight:800">☀️ أحتاج أن أستيقظ الساعة:</label>
+            <input id="wake-time" type="time" class="input" style="max-width:140px" value="07:00">
+          </div>
+
+          <div id="plan-grid" class="plan-grid" style="padding-top:8px"></div>
+
+          <div id="nap-row" class="nap-row">
+            <button class="btn sm soft" data-nap="20">⚡ قيلولة طاقة 20 د</button>
+            <button class="btn sm soft" style="--accent:var(--violet)" data-nap="cycle">🌙 قيلولة دورة كاملة</button>
+          </div>
+
+          <div class="panel-box stack">
+            <div class="row between wrap">
+              <h3 id="preview-title">🧠 خريطة مراحل النوم المتوقعة</h3>
+              <span id="preview-meta" class="xs muted"></span>
+            </div>
+            <div id="hypno-preview"></div>
+            <div id="benefit-box" class="benefit">اختر خطة لترى مراحل نومك المتوقعة وفوائدها الفسيولوجية.</div>
+            <button id="set-alarm-btn" class="btn primary lg block" disabled>⏰ اختر خطة أولاً</button>
+          </div>
+        </div>
+      </div>
+
+      <details class="card">
+        <summary>⚙️ إعدادات المنبه والنغمة</summary>
+        <div class="stack">
+          <div class="grid-2">
+            <div class="field">
+              <label for="latency">مدة الغفو المتوقعة (دقيقة)</label>
+              <input id="latency" type="number" min="0" max="60" class="input" value="15">
+            </div>
+            <div class="field">
+              <label for="smart-wake">الإيقاظ التدريجي قبل الموعد</label>
+              <select id="smart-wake" class="input">
+                <option value="0">بدون</option>
+                <option value="5">5 دقائق</option>
+                <option value="10">10 دقائق</option>
+                <option value="15">15 دقيقة</option>
+              </select>
+            </div>
+          </div>
+          <div class="field">
+            <div class="row between"><label for="cycle-len">طول دورة النوم الشخصية</label><b id="cycle-len-val" class="xs" style="color:var(--sky)">90 د</b></div>
+            <input id="cycle-len" type="range" min="80" max="110" step="5" value="90">
+            <span class="xs faint">المتوسط 90 دقيقة، ويتراوح بين 80 و110 حسب الشخص. سيقترح التطبيق تعديلها بناءً على تقييمك لاستيقاظك.</span>
+          </div>
+          <label class="switch">
+            <span><span class="t">🧮 قفل الإيقاظ المؤكد</span><br><span class="d">حل مسألة حسابية بسيطة لإيقاف المنبه حتى لا تطفئه وأنت نائم</span></span>
+            <input id="math-lock" type="checkbox">
+          </label>
+          <div class="row between">
+            <span class="label">🎵 نغمة المنبه المتصاعدة</span>
+            <button id="preview-tone" class="btn sm soft">▶ معاينة</button>
+          </div>
+          <div id="tone-grid" class="tone-grid">
+            <button class="tone" data-tone="sunrise"><div class="e">🌅</div><div class="n">إشراقة</div></button>
+            <button class="tone" data-tone="crystal"><div class="e">🎹</div><div class="n">بيانو</div></button>
+            <button class="tone" data-tone="zen"><div class="e">🔔</div><div class="n">أجراس</div></button>
+            <button class="tone" data-tone="birds"><div class="e">🐦</div><div class="n">عصافير</div></button>
+            <button class="tone" data-tone="radar"><div class="e">⚡</div><div class="n">نبض</div></button>
+          </div>
+          <div class="row">
+            <span class="label">🔊 الصوت</span>
+            <input id="volume" type="range" min="10" max="100" value="80">
+            <b id="volume-val" class="xs" style="min-width:36px;color:var(--sky)">80%</b>
+          </div>
+        </div>
+      </details>
+    </section>
+
+    <!-- ==================== التركيز ==================== -->
+    <section id="panel-focus" class="panel" role="tabpanel" aria-labelledby="tab-focus" hidden>
+      <div id="focus-card" class="card stack">
+        <div class="row between focus-extra">
+          <input id="session-name" class="input" style="max-width:260px;text-align:right" maxlength="60" placeholder="ماذا ستنجز؟ (مثال: مذاكرة الفيزياء)">
+          <span id="mode-badge" class="badge">تركيز</span>
+        </div>
+
+        <div class="focus-stage">
+          <button class="btn sm exit-imm" id="exit-imm">↩ إظهار الواجهة</button>
+          <div id="imm-session" class="sm muted" hidden></div>
+          <div class="ring-wrap">
+            <svg class="ring" viewBox="0 0 120 120" aria-hidden="true">
+              <circle class="ring-bg" cx="60" cy="60" r="54" stroke-width="7"/>
+              <circle id="ring-fg" class="ring-fg" cx="60" cy="60" r="54" stroke-width="7" stroke="var(--emerald)" stroke-dasharray="339.292" stroke-dashoffset="339.292"/>
+            </svg>
+            <div class="ring-center">
+              <div id="tree" aria-hidden="true"></div>
+              <div id="timer" class="tabular" role="timer" aria-live="off">25:00</div>
+              <div id="tree-title" class="xs" style="color:var(--emerald);font-weight:800">بذرة الطموح 🌱</div>
+            </div>
+          </div>
+          <div id="cycle-dots" class="dots" aria-label="جلسات اليوم"></div>
+
+          <div id="presets" class="presets focus-extra">
+            <button class="btn sm" data-min="15">15 د</button>
+            <button class="btn sm" data-min="25">25 د</button>
+            <button class="btn sm" data-min="45">45 د</button>
+            <button class="btn sm" data-min="50">50 د</button>
+          </div>
+
+          <div class="controls">
+            <button id="focus-start" class="btn primary emerald lg">▶ ابدأ التركيز</button>
+            <button id="focus-skip" class="btn lg" title="تخطي المرحلة" aria-label="تخطي">⏭</button>
+            <button id="focus-reset" class="btn lg" title="إعادة الضبط" aria-label="إعادة الضبط">↺</button>
+          </div>
+
+          <div id="break-tip" class="tip" hidden>
+            <span id="break-tip-ico" style="font-size:22px">🧘</span>
+            <div id="break-tip-text"></div>
+            <button id="break-tip-action" class="btn sm soft" hidden></button>
+          </div>
+        </div>
+
+        <div class="grid-4 focus-extra" style="grid-template-columns:repeat(3,1fr)">
+          <div class="kpi"><div id="today-sessions" class="v">0/8</div><div class="l">جلسات اليوم</div></div>
+          <div class="kpi"><div id="today-minutes" class="v">0</div><div class="l">دقائق تركيز</div></div>
+          <div class="kpi"><div id="focus-streak" class="v">0🔥</div><div class="l">أيام متتالية</div></div>
+        </div>
+      </div>
+
+      <details class="card focus-extra">
+        <summary>⚙️ إعدادات بومودورو</summary>
+        <div class="stack">
+          <div class="grid-4">
+            <div class="field"><label for="set-work">التركيز (د)</label><input id="set-work" type="number" min="5" max="120" class="input" value="25"></div>
+            <div class="field"><label for="set-short">راحة قصيرة (د)</label><input id="set-short" type="number" min="1" max="30" class="input" value="5"></div>
+            <div class="field"><label for="set-long">راحة طويلة (د)</label><input id="set-long" type="number" min="5" max="60" class="input" value="15"></div>
+            <div class="field"><label for="set-every">راحة طويلة كل</label><input id="set-every" type="number" min="2" max="8" class="input" value="4"></div>
+          </div>
+          <div class="field" style="max-width:200px"><label for="set-goal">الهدف اليومي (جلسات)</label><input id="set-goal" type="number" min="1" max="20" class="input" value="8"></div>
+          <label class="switch"><span><span class="t">بدء الراحة تلقائياً</span><br><span class="d">تنطلق الراحة فور انتهاء جلسة التركيز</span></span><input id="auto-break" type="checkbox" checked></label>
+          <label class="switch"><span><span class="t">بدء التركيز التالي تلقائياً</span><br><span class="d">تنطلق الجلسة التالية بعد انتهاء الراحة</span></span><input id="auto-focus" type="checkbox"></label>
+          <label class="switch"><span><span class="t">وضع الانغماس</span><br><span class="d">إخفاء كل المشتتات أثناء التركيز (Esc للخروج)</span></span><input id="immersive" type="checkbox" checked></label>
+        </div>
+      </details>
+    </section>
+
+    <!-- ==================== الماء ==================== -->
+    <section id="panel-water" class="panel" role="tabpanel" aria-labelledby="tab-water" hidden>
+      <div class="card stack">
+        <div class="card-head" style="margin-bottom:0">
+          <div>
+            <h2>💧 تروية الدماغ والأداء المعرفي</h2>
+            <p class="xs muted">حتى الجفاف الخفيف (1–2%) يضعف الانتباه والذاكرة قصيرة المدى</p>
+          </div>
+          <span id="water-goal-badge" class="badge">الهدف: 2.8 لتر</span>
+        </div>
+
+        <div class="water-hero">
+          <div class="bottle" role="img" aria-label="مستوى الماء">
+            <div id="water-wave" class="wave"></div>
+            <div class="bottle-label"><b id="water-pct">0%</b><span class="xs" id="water-amount">0 / 2800 مل</span></div>
+          </div>
+          <div class="stack">
+            <div id="water-pace" class="pace idle">—</div>
+            <div class="quick">
+              <button class="btn soft" data-ml="150">+150 مل</button>
+              <button class="btn soft" data-ml="250">+كوب 250</button>
+              <button class="btn primary" data-ml="500">+زجاجة 500</button>
+            </div>
+            <div class="row">
+              <input id="custom-ml" type="number" min="50" max="1500" step="50" class="input" placeholder="كمية مخصصة (مل)">
+              <button id="add-custom" class="btn">إضافة</button>
+              <button id="undo-water" class="btn" title="تراجع عن آخر إضافة" aria-label="تراجع">↶</button>
+            </div>
+            <div id="next-reminder" class="xs muted"></div>
+          </div>
+        </div>
+
+        <div>
+          <div class="row between" style="margin-bottom:6px"><h3>📝 سجل اليوم</h3><span id="water-count" class="xs muted"></span></div>
+          <div id="water-log" class="log"></div>
+        </div>
+      </div>
+
+      <details class="card">
+        <summary>⚙️ إعدادات الهدف والتذكير</summary>
+        <div class="stack">
+          <div class="grid-2">
+            <div class="field"><label for="w-weight">وزن الجسم (كجم)</label><input id="w-weight" type="number" min="30" max="200" class="input" value="70"></div>
+            <div class="field"><label for="w-activity">مستوى النشاط</label>
+              <select id="w-activity" class="input">
+                <option value="1">خفيف (مكتب/دراسة)</option>
+                <option value="1.25">متوسط (حركة عادية)</option>
+                <option value="1.5">عالٍ (رياضة ومجهود)</option>
+              </select>
+            </div>
+          </div>
+          <label class="switch"><span><span class="t">☀️ طقس حار اليوم</span><br><span class="d">يضيف 500 مل لتعويض التعرّق</span></span><input id="w-hot" type="checkbox"></label>
+          <div class="grid-4" style="grid-template-columns:repeat(3,1fr)">
+            <div class="field"><label for="w-interval">التذكير</label>
+              <select id="w-interval" class="input">
+                <option value="30">كل 30 د</option><option value="45">كل 45 د</option><option value="60">كل ساعة</option><option value="90">كل 90 د</option><option value="120">كل ساعتين</option><option value="0">متوقف</option>
+              </select>
+            </div>
+            <div class="field"><label for="w-start">من الساعة</label><input id="w-start" type="time" class="input" value="08:00"></div>
+            <div class="field"><label for="w-end">حتى الساعة</label><input id="w-end" type="time" class="input" value="23:00"></div>
+          </div>
+          <p class="xs faint">التذكير ذكي: لا يزعجك خارج ساعات الاستيقاظ أو أثناء تفعيل منبه النوم، ويُعاد ضبطه تلقائياً كلما شربت.</p>
+          <button id="water-reset" class="link" style="justify-self:start">إعادة ضبط سجل اليوم</button>
+        </div>
+      </details>
+    </section>
+
+    <!-- ==================== الإحصاءات ==================== -->
+    <section id="panel-stats" class="panel" role="tabpanel" aria-labelledby="tab-stats" hidden>
+      <div class="grid-4">
+        <div class="kpi"><div id="kpi-focus" class="v">0 د</div><div class="l">تركيز اليوم</div></div>
+        <div class="kpi"><div id="kpi-water" class="v">0%</div><div class="l">ترطيب اليوم</div></div>
+        <div class="kpi"><div id="kpi-sleep" class="v">—</div><div class="l">آخر نوم</div></div>
+        <div class="kpi"><div id="kpi-streak" class="v">0</div><div class="l">أيام تحقيق هدف الماء</div></div>
+      </div>
+      <div class="card"><div class="card-head"><h2>🌳 دقائق التركيز — آخر 7 أيام</h2></div><div id="chart-focus"></div></div>
+      <div class="card"><div class="card-head"><h2>💧 الماء (مل) — آخر 7 أيام</h2></div><div id="chart-water"></div></div>
+      <div class="card stack">
+        <div class="card-head" style="margin-bottom:0"><h2>🛌 تحليل نومك الذكي</h2></div>
+        <div id="sleep-insight" class="benefit">لا توجد بيانات بعد. استخدم المنبه وقيّم استيقاظك ليتعلم التطبيق ما يناسبك.</div>
+        <div id="sleep-log" class="log"></div>
+      </div>
+      <div class="card">
+        <div class="card-head"><h2>🗂️ بياناتك</h2><span class="xs muted">تُحفظ محلياً على جهازك فقط</span></div>
+        <div class="row wrap">
+          <button id="export-btn" class="btn soft">⬇ تصدير نسخة احتياطية</button>
+          <label class="btn soft" style="--accent:var(--violet)">⬆ استيراد<input id="import-file" type="file" accept="application/json" hidden></label>
+          <button id="reset-all" class="btn danger">🗑 مسح كل البيانات</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="xs faint">اختصارات: <kbd>1</kbd>–<kbd>4</kbd> للتنقل · <kbd>مسافة</kbd> تشغيل/إيقاف المؤقت · <kbd>D</kbd> وضع الليل · <kbd>Esc</kbd> إغلاق</footer>
+</div>
+
+<!-- نافذة الرنين -->
+<dialog id="ring-dialog">
+  <div class="dlg">
+    <div class="big">☀️</div>
+    <h2 id="ring-title">صباح الخير! انتهت دورات نومك</h2>
+    <p id="ring-msg">استيقظ الآن وأنت في نهاية دورة — أفضل لحظة للنشاط بدون خمول.</p>
+    <div class="panel-box" style="text-align:right">
+      <div class="row between xs"><span class="muted">قوة الصوت المتصاعدة</span><b id="esc-text" style="color:var(--amber)">25%</b></div>
+      <div class="track" style="height:6px;margin-top:6px"><div id="esc-bar" class="fill" style="width:25%;background:var(--amber)"></div></div>
+    </div>
+    <div id="math-box" class="stack" hidden>
+      <span class="xs muted">حل المسألة لإيقاف المنبه:</span>
+      <div class="math"><b id="math-q" class="tabular">0 + 0 =</b><input id="math-a" type="number" inputmode="numeric" class="input" aria-label="الإجابة"></div>
+    </div>
+    <button id="stop-ring" class="btn primary emerald lg block">✅ استيقظت — إيقاف</button>
+    <div class="grid-2">
+      <button id="snooze-short" class="btn amber soft">⏱ غفوة 20 د</button>
+      <button id="snooze-cycle" class="btn">💤 دورة كاملة</button>
+    </div>
+  </div>
+</dialog>
+
+<!-- تقييم الاستيقاظ -->
+<dialog id="rate-dialog">
+  <div class="dlg">
+    <div class="big" style="animation:none">🌤️</div>
+    <h2>كيف تشعر الآن؟</h2>
+    <p>تقييمك يساعد التطبيق على تعلّم عدد الدورات وطول الدورة الأنسب لجسمك.</p>
+    <div class="rate">
+      <button data-rate="fresh"><span>😃</span>منتعش</button>
+      <button data-rate="ok"><span>🙂</span>عادي</button>
+      <button data-rate="groggy"><span>🥱</span>مرهق</button>
+    </div>
+    <button class="link" data-close>تخطي</button>
+  </div>
+</dialog>
+
+<!-- تهنئة -->
+<dialog id="congrats-dialog">
+  <div class="dlg">
+    <div class="big">🏆</div>
+    <h2 id="congrats-title">تهانينا الحارة!</h2>
+    <p id="congrats-text">أتممت هدفك اليومي وأثمرت شجرتك بالكامل!</p>
+    <button class="btn primary emerald lg block" data-close>رائع، استمر ✨</button>
+  </div>
+</dialog>
+
+<!-- تذكير الماء -->
+<dialog id="water-dialog">
+  <div class="dlg">
+    <div class="big">💧</div>
+    <h2>وقت رشفة ماء منعشة!</h2>
+    <p id="water-dialog-text">اشرب كوباً الآن لتحافظ على تركيزك.</p>
+    <button id="water-dialog-drink" class="btn primary lg block">✅ شربت 250 مل</button>
+    <div class="grid-2">
+      <button id="water-dialog-snooze" class="btn">⏰ بعد 15 د</button>
+      <button class="btn" data-close>لاحقاً</button>
+    </div>
+  </div>
+</dialog>
+
+<!-- وضع الليل -->
+<div id="dim" hidden title="انقر للعودة">
+  <div style="font-size:40px">🌙</div>
+  <div id="dim-clock">--:--</div>
+  <div id="dim-sub" class="xs" style="color:#475569">انقر في أي مكان للعودة</div>
+</div>
+
+<div id="toasts" aria-live="polite"></div>
+
+<script>
+'use strict';
+/* ================= أدوات مساعدة ================= */
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const LOCALE = 'ar-EG-u-nu-latn';
+const MIN = 60000;
+const pad = n => String(n).padStart(2, '0');
+const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+const num = (v, d) => { const n = parseFloat(v); return Number.isFinite(n) ? n : d; };
+const round50 = v => Math.round(v / 50) * 50;
+const timeFmt = new Intl.DateTimeFormat(LOCALE, { hour: 'numeric', minute: '2-digit', hour12: true });
+const clockFmt = new Intl.DateTimeFormat(LOCALE, { hour: 'numeric', minute: '2-digit', second: '2-digit', hour12: true });
+const fmtTime = d => timeFmt.format(d);
+const fmtHM = ms => { const t = Math.max(0, Math.round(ms / MIN)); const h = Math.floor(t / 60), m = t % 60; return h ? `${h}س ${m ? m + 'د' : ''}`.trim() : `${m}د`; };
+const fmtHMS = ms => { const s = Math.max(0, Math.floor(ms / 1000)); return `${pad(Math.floor(s / 3600))}:${pad(Math.floor(s % 3600 / 60))}:${pad(s % 60)}`; };
+const fmtMS = sec => `${pad(Math.floor(sec / 60))}:${pad(sec % 60)}`;
+const dayKey = (d = new Date()) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+const parseHM = s => { const [h, m] = String(s || '0:0').split(':').map(Number); return (h || 0) * 60 + (m || 0); };
+const minutesOfDay = (d = new Date()) => d.getHours() * 60 + d.getMinutes();
+/** أقرب موعد قادم لساعة معيّنة (اليوم أو غداً) */
+function nextOccurrence(hm, graceMin = 0) {
+  const d = new Date(); const m = parseHM(hm);
+  d.setHours(Math.floor(m / 60), m % 60, 0, 0);
+  if (d.getTime() < Date.now() - graceMin * MIN) d.setDate(d.getDate() + 1);
+  return d.getTime();
+}
+const pick = arr => arr[Math.floor(Math.random() * arr.length)];
+
+/* ================= التخزين الموحّد ================= */
+const STORE_KEY = 'iqaa_smart_v2';
+const DEFAULTS = () => ({
+  theme: 'auto', tab: 'sleep',
+  sleep: { latency: 15, cycleLen: 90, smartWake: 10, mathLock: false, tone: 'sunrise', volume: 0.8,
+           mode: 'now', bedTime: '23:00', wakeTime: '07:00', alarm: null, log: [] },
+  focus: { work: 25, short: 5, long: 15, every: 4, goal: 8, autoBreak: true, autoFocus: false, immersive: true,
+           sessionName: '', mode: 'work', running: false, endAt: null, remainingSec: 1500, totalSec: 1500, setCount: 0, days: {} },
+  water: { weight: 70, activity: 1.25, hot: false, interval: 60, start: '08:00', end: '23:00',
+           days: {}, lastReminderAt: 0, snoozeUntil: 0 }
+});
+function deepMerge(base, extra) {
+  if (!extra || typeof extra !== 'object' || Array.isArray(extra)) return base;
+  for (const k of Object.keys(base)) {
+    if (!(k in extra)) continue;
+    const b = base[k], e = extra[k];
+    if (b && typeof b === 'object' && !Array.isArray(b) && Object.keys(b).length && e && typeof e === 'object' && !Array.isArray(e)) deepMerge(b, e);
+    else if (e !== undefined && (b === null || typeof e === typeof b || (Array.isArray(b) && Array.isArray(e)))) base[k] = e;
+  }
+  return base;
+}
+function loadState() {
+  const s = DEFAULTS();
+  try {
+    const raw = localStorage.getItem(STORE_KEY);
+    if (raw) return deepMerge(s, JSON.parse(raw));
+    // ترحيل بيانات النسخة القديمة
+    const oldPomo = JSON.parse(localStorage.getItem('smart_pomo_tree_v1') || 'null');
+    if (oldPomo?.goalCycles) s.focus.goal = oldPomo.goalCycles;
+    const oldWater = JSON.parse(localStorage.getItem('smart_water_' + new Date().toDateString()) || 'null');
+    if (oldWater) {
+      s.water.weight = oldWater.weight || 70; s.water.activity = oldWater.activity || 1.25;
+      if (oldWater.interval !== undefined) s.water.interval = oldWater.interval;
+      if (oldWater.drunkMl) s.water.days[dayKey()] = { entries: [{ t: Date.now(), ml: oldWater.drunkMl }] };
+    }
+  } catch (e) {}
+  return s;
+}
+const S = loadState();
+let saveTimer = null;
+function save() { clearTimeout(saveTimer); saveTimer = setTimeout(() => { try { localStorage.setItem(STORE_KEY, JSON.stringify(S)); } catch (e) {} try { syncNative(); } catch (e) {} }, 150); }
+/* ================= جسر أندرويد الأصلي ================= */
+const NATIVE = (() => { try { return window.AndroidBridge && window.AndroidBridge.isNative() ? window.AndroidBridge : null; } catch (e) { return null; } })();
+const nativeSig = {};
+function nsched(id, at, title, body) {
+  if (!NATIVE) return;
+  const sig = at ? `${Math.round(at / 1000)}|${title}|${body}` : '';
+  if (nativeSig[id] === sig) return;
+  nativeSig[id] = sig;
+  try { at ? NATIVE.schedule(id, at, title, body) : NATIVE.cancel(id); } catch (e) {}
+}
+function insideWindowAt(ts) {
+  const s = parseHM(S.water.start), e = parseHM(S.water.end), n = minutesOfDay(new Date(ts));
+  return e > s ? (n >= s && n <= e) : (n >= s || n <= e);
+}
+/** يجدول المنبه والتذكيرات في نظام أندرويد لتعمل حتى لو أُغلق التطبيق */
+function syncNative() {
+  if (!NATIVE) return;
+  const a = S.sleep.alarm;
+  nsched(1, a ? a.wakeAt : 0, '⏰ حان وقت الاستيقاظ!', a ? (a.nap ? 'انتهت القيلولة — قم الآن بنشاط' : `استيقظ الآن — ${a.label}`) : '');
+  const f = S.focus;
+  nsched(3, f.running && f.endAt ? f.endAt : 0, f.mode === 'work' ? '✅ انتهت جلسة التركيز' : '🌳 انتهت الراحة', f.mode === 'work' ? 'أحسنت! وقت الراحة الآن' : 'جاهز لجلسة تركيز جديدة؟');
+  let wAt = 0;
+  try {
+    if (S.water.interval && !a && waterTotal() < waterGoal()) {
+      const at = nextReminderAt();
+      if (at) { const t = Math.max(at, Date.now() + 60000); if (insideWindowAt(t)) wAt = t; }
+    }
+    nsched(2, wAt, '💧 وقت رشفة ماء', wAt ? `اشرب ~${suggestedSip()} مل الآن لتحافظ على تركيزك` : '');
+  } catch (e) {}
+}
+function pruneOld() {
+  const cutoff = dayKey(new Date(Date.now() - 60 * 24 * 60 * MIN));
+  for (const store of [S.focus.days, S.water.days]) for (const k of Object.keys(store)) if (k < cutoff) delete store[k];
+  if (S.sleep.log.length > 60) S.sleep.log = S.sleep.log.slice(-60);
+}
+
+/* ================= الإشعارات والتنبيهات ================= */
+function toast(msg, { action, onAction, ms = 4500, icon = '✨' } = {}) {
+  const el = document.createElement('div');
+  el.className = 'toast';
+  const ic = document.createElement('span'); ic.textContent = icon;
+  const tx = document.createElement('span'); tx.textContent = msg; tx.style.flex = '1';
+  el.append(ic, tx);
+  if (action) {
+    const b = document.createElement('button'); b.className = 'btn sm soft'; b.textContent = action;
+    b.onclick = () => { onAction?.(); dismiss(); }; el.append(b);
+  }
+  $('#toasts').append(el);
+  const dismiss = () => { el.classList.add('out'); setTimeout(() => el.remove(), 300); };
+  setTimeout(dismiss, ms);
+}
+function notify(title, body, { force = false, tag } = {}) {
+  if (NATIVE) { if (!force && !document.hidden) return; if (tag === 'alarm' || tag === 'focus' || tag === 'water') return; try { NATIVE.notify(title, body); } catch (e) {} return; }
+  try {
+    if (!('Notification' in window) || Notification.permission !== 'granted') return;
+    if (!force && !document.hidden) return;
+    new Notification(title, { body, tag, renotify: !!tag, lang: 'ar', dir: 'rtl' });
+  } catch (e) {}
+}
+function vibrate(p) { try { navigator.vibrate?.(p); } catch (e) {} }
+function updateNotifBtn() {
+  const b = $('#notif-btn');
+  if (NATIVE) { b.classList.add('on'); b.title = 'الإشعارات يديرها نظام أندرويد'; return; }
+  const ok = 'Notification' in window && Notification.permission === 'granted';
+  b.classList.toggle('on', ok);
+  b.title = ok ? 'الإشعارات مفعّلة' : ('Notification' in window ? 'تفعيل إشعارات المتصفح' : 'المتصفح لا يدعم الإشعارات');
+}
+async function requestNotif() {
+  if (NATIVE) return toast('الإشعارات والمنبه مفعّلة عبر نظام أندرويد. يمكنك تعديلها من إعدادات التطبيق في الهاتف', { icon: '🔔', ms: 6000 });
+  if (!('Notification' in window)) return toast('متصفحك لا يدعم الإشعارات', { icon: '⚠️' });
+  if (Notification.permission === 'granted') return toast('الإشعارات مفعّلة بالفعل', { icon: '🔔' });
+  const p = await Notification.requestPermission();
+  updateNotifBtn();
+  toast(p === 'granted' ? 'تم تفعيل الإشعارات — ستصلك التنبيهات حتى لو كنت في تبويب آخر' : 'لم يتم منح الإذن بالإشعارات', { icon: p === 'granted' ? '🔔' : '⚠️' });
+}
+
+/* ================= محرك الصوت ================= */
+const Sound = {
+  ctx: null, keep: null,
+  ensure() {
+    if (!this.ctx) { const C = window.AudioContext || window.webkitAudioContext; if (!C) return null; this.ctx = new C(); }
+    if (this.ctx.state === 'suspended') this.ctx.resume();
+    return this.ctx;
+  },
+  note(freq, at, dur, vol, { type = 'sine', glide, harmonic = true } = {}) {
+    const ctx = this.ensure(); if (!ctx) return;
+    const t = ctx.currentTime + at;
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(Math.max(0.0002, vol), t + Math.min(0.04, dur / 4));
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    g.connect(ctx.destination);
+    const oscs = [[freq, 1]]; if (harmonic && type === 'sine') oscs.push([freq * 2, 0.25]);
+    for (const [f, mul] of oscs) {
+      const o = ctx.createOscillator(); o.type = type; o.frequency.setValueAtTime(f, t);
+      if (glide) o.frequency.exponentialRampToValueAtTime(glide * (f / freq), t + dur * 0.5);
+      const og = ctx.createGain(); og.gain.value = mul; o.connect(og); og.connect(g);
+      o.start(t); o.stop(t + dur + 0.05);
+    }
+  },
+  play(tone, vol = S.sleep.volume) {
+    const v = clamp(vol, 0.02, 1) * 0.55;
+    const n = (f, at, d, opt) => this.note(f, at, d, v, opt);
+    switch (tone) {
+      case 'crystal': [587.33, 880, 1174.66, 880].forEach((f, i) => n(f, i * 0.16, 0.6)); break;
+      case 'zen': [432, 648, 540].forEach((f, i) => n(f, i * 0.35, 1.6)); break;
+      case 'birds': for (let i = 0; i < 4; i++) n(1600 + (i % 2) * 300, i * 0.18, 0.14, { glide: 2600, harmonic: false }); break;
+      case 'radar': for (let i = 0; i < 4; i++) this.note(880, i * 0.13, 0.09, v * 0.6, { type: 'square' }); break;
+      case 'ding': n(800, 0, 0.35, { glide: 1250 }); break;
+      case 'chime': [659.25, 987.77, 1318.5].forEach((f, i) => n(f, i * 0.12, 0.7)); break;
+      default: [523.25, 659.25, 783.99, 1046.5].forEach((f, i) => n(f, i * 0.15, 0.7));
+    }
+  },
+  startKeepAlive() {
+    const ctx = this.ensure(); if (!ctx || this.keep) return;
+    try { const o = ctx.createOscillator(), g = ctx.createGain(); o.frequency.value = 1; g.gain.value = 0.0001; o.connect(g); g.connect(ctx.destination); o.start(); this.keep = o; } catch (e) {}
+  },
+  stopKeepAlive() { if (this.keep) { try { this.keep.stop(); this.keep.disconnect(); } catch (e) {} this.keep = null; } }
+};
+
+/* ================= قفل الشاشة (Wake Lock) ================= */
+let wakeLock = null;
+async function syncWakeLock() {
+  const need = !!S.sleep.alarm || S.focus.running;
+  if (NATIVE) { try { NATIVE.keepScreenOn(need); } catch (e) {} }
+  if (need && !wakeLock && 'wakeLock' in navigator && document.visibilityState === 'visible') {
+    try { wakeLock = await navigator.wakeLock.request('screen'); wakeLock.addEventListener('release', () => { wakeLock = null; }); } catch (e) {}
+  } else if (!need && wakeLock) { try { await wakeLock.release(); } catch (e) {} wakeLock = null; }
+  if (S.sleep.alarm) Sound.startKeepAlive(); else Sound.stopKeepAlive();
+}
+
+/* ================= المظهر ================= */
+const mq = matchMedia('(prefers-color-scheme: light)');
+function applyTheme() {
+  const t = S.theme === 'auto' ? (mq.matches ? 'light' : 'dark') : S.theme;
+  document.documentElement.dataset.theme = t;
+  $('meta[name="theme-color"]').content = t === 'light' ? '#eef2f8' : '#070913';
+  $('#theme-btn').textContent = { auto: '🌓', dark: '🌙', light: '☀️' }[S.theme];
+  $('#theme-btn').title = { auto: 'المظهر: تلقائي', dark: 'المظهر: داكن', light: 'المظهر: فاتح' }[S.theme];
+}
+function setRangeFill(el) { const p = (el.value - el.min) / (el.max - el.min) * 100; el.style.setProperty('--p', p + '%'); }
+
+/* ================= التبويبات ================= */
+const TAB_COLORS = { sleep: 'var(--sky)', focus: 'var(--emerald)', water: 'var(--sky)', stats: 'var(--violet)' };
+const TABS = ['sleep', 'focus', 'water', 'stats'];
+function switchTab(tab, { silent } = {}) {
+  if (!TABS.includes(tab)) tab = 'sleep';
+  const run = () => {
+    S.tab = tab;
+    TABS.forEach(t => {
+      $('#panel-' + t).hidden = t !== tab;
+      $('#tab-' + t).setAttribute('aria-selected', String(t === tab));
+      $('#tab-' + t).tabIndex = t === tab ? 0 : -1;
+    });
+    const nav = $('.tabs');
+    nav.style.setProperty('--i', TABS.indexOf(tab));
+    nav.style.setProperty('--tab-color', TAB_COLORS[tab]);
+    if (tab === 'stats') renderStats();
+    if (tab === 'water') renderWater();
+    updateImmersive();
+    save();
+  };
+  if (!silent && document.startViewTransition && !matchMedia('(prefers-reduced-motion: reduce)').matches) document.startViewTransition(run); else run();
+}
+
+/* ================= النوم ================= */
+const BENEFITS = {
+  nap20: '<b>قيلولة الطاقة (20 دقيقة):</b> تبقى في النوم الخفيف فتستيقظ دون خمول، وتحسّن اليقظة والمزاج لساعات. مثالية بين 1 و3 ظهراً.',
+  1: '<b>دورة واحدة:</b> قيلولة كاملة تتضمن نوماً عميقاً وحلماً قصيراً — تعزز الإبداع وتثبيت المهارات الحركية.',
+  2: '<b>دورتان (3 ساعات):</b> حل طوارئ فقط؛ يحصل الجسم على جزء من النوم العميق لكن الذاكرة والمزاج يتأثران.',
+  3: '<b>3 دورات (4.5 ساعات):</b> نوم الطوارئ؛ يحصل الجسم على معظم النوم العميق الترميمي، لكن نقص نوم الأحلام يؤثر على المزاج والتعلّم.',
+  4: '<b>4 دورات (6 ساعات):</b> الحد الأدنى المقبول مؤقتاً؛ تنظيف الدماغ من الفضلات عبر الجهاز الغليمفاوي ودعم المناعة.',
+  5: '<b>5 دورات (7.5 ساعات):</b> المعدل الموصى به لمعظم البالغين؛ استقرار المزاج وذروة الذاكرة والتركيز وتوازن هرمونات الشهية.',
+  6: '<b>6 دورات (9 ساعات):</b> تعافٍ فسيولوجي كامل؛ مثالي بعد مجهود بدني كبير أو لتعويض ديون النوم، ويدعم صحة القلب.'
+};
+const STAGES = [ // level: 0 يقظة، 1 REM، 2 خفيف، 3 متوسط، 4 عميق
+  { name: 'نوم خفيف (N1) — بداية الاسترخاء', lvl: 2 },
+  { name: 'نوم متوسط (N2) — تثبيت الذاكرة', lvl: 3 },
+  { name: 'نوم عميق (N3) — صيانة الجسد والمناعة', lvl: 4 },
+  { name: 'نوم متوسط (N2) — صعود نحو الحلم', lvl: 3 },
+  { name: 'نوم الأحلام (REM) — معالجة المشاعر والتعلّم', lvl: 1 }
+];
+/** نموذج تقريبي لتوزيع المراحل في الدورة رقم i من n: النوم العميق يتناقص والأحلام تزداد مع الليل */
+function cycleShape(i) {
+  const n1 = 0.06, deep = Math.max(0.06, 0.36 - i * 0.07), rem = Math.min(0.38, 0.12 + i * 0.06);
+  const n2 = Math.max(0.1, 1 - n1 - deep - rem);
+  return [n1, n2 * 0.55, deep, n2 * 0.45, rem];
+}
+function stageAt(minSinceBed, cycles = 6) {
+  const { latency, cycleLen } = S.sleep;
+  if (minSinceBed < latency) return { cycle: 0, name: 'مرحلة الغفو والاسترخاء 😌' };
+  const m = minSinceBed - latency, i = Math.floor(m / cycleLen);
+  if (i >= cycles) return { cycle: cycles, name: 'نهاية الدورة — أفضل لحظة للاستيقاظ ☀️' };
+  let f = (m % cycleLen) / cycleLen, acc = 0; const sh = cycleShape(i);
+  for (let k = 0; k < 5; k++) { acc += sh[k]; if (f <= acc) return { cycle: i + 1, name: STAGES[k].name }; }
+  return { cycle: i + 1, name: STAGES[4].name };
+}
+/** رسم خريطة مراحل النوم (Hypnogram) */
+function hypnoSVG(cycles, { nowMin = null, napMin = null } = {}) {
+  const { latency, cycleLen } = S.sleep;
+  const total = napMin ?? (latency + cycles * cycleLen);
+  const W = 600, H = 130, L = 8, R = 62, T = 10, B = 22, w = W - L - R, h = H - T - B;
+  const x = m => L + (m / total) * w;           // يبدأ من اليسار زمنياً (المحور الزمني)
+  const y = lvl => T + (lvl / 4) * h;
+  let pts = [[0, 0], [Math.min(latency, total), 0]], rems = '';
+  if (napMin != null) { pts = [[0, 0], [Math.min(latency, total), 0], [Math.min(latency, total), 2], [total, 2], [total, 0]]; }
+  else {
+    for (let i = 0; i < cycles; i++) {
+      const s0 = latency + i * cycleLen; let acc = s0; const sh = cycleShape(i);
+      sh.forEach((frac, k) => {
+        const a = acc, b = acc + frac * cycleLen; pts.push([a, STAGES[k].lvl], [b, STAGES[k].lvl]);
+        if (k === 4) rems += `<rect x="${x(a).toFixed(1)}" y="${T}" width="${(x(b) - x(a)).toFixed(1)}" height="${h}" fill="var(--violet)" opacity=".10" rx="3"/>`;
+        acc = b;
+      });
+    }
+    pts.push([total, 0]);
+  }
+  const d = pts.map(([m, l], i) => `${i ? 'L' : 'M'}${x(m).toFixed(1)} ${y(l).toFixed(1)}`).join(' ');
+  const labels = [['يقظة', 0], ['أحلام', 1], ['خفيف', 2], ['متوسط', 3], ['عميق', 4]]
+    .map(([t, l]) => `<text x="${W - R + 8}" y="${y(l) + 3}" text-anchor="start">${t}</text><line x1="${L}" x2="${W - R}" y1="${y(l)}" y2="${y(l)}" stroke="var(--border)" stroke-dasharray="2 4"/>`).join('');
+  let ticks = '';
+  const step = total > 300 ? 90 : total > 120 ? 60 : 30;
+  for (let m = 0; m <= total; m += step) ticks += `<text x="${x(m)}" y="${H - 6}" text-anchor="middle">${m ? Math.round(m / 60 * 10) / 10 + 'س' : 'بدء'}</text>`;
+  const now = nowMin != null ? `<line x1="${x(clamp(nowMin, 0, total))}" x2="${x(clamp(nowMin, 0, total))}" y1="${T - 4}" y2="${T + h + 4}" stroke="var(--amber)" stroke-width="2"/><circle cx="${x(clamp(nowMin, 0, total))}" cy="${T - 4}" r="4" fill="var(--amber)"/>` : '';
+  return `<svg class="hypno" viewBox="0 0 ${W} ${H}" role="img" aria-label="خريطة مراحل النوم" style="direction:ltr">
+    <defs><linearGradient id="hg${cycles}${napMin || ''}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--violet)"/><stop offset=".5" stop-color="var(--sky)"/><stop offset="1" stop-color="#1d4ed8"/></linearGradient></defs>
+    ${labels}${rems}<path d="${d}" fill="none" stroke="url(#hg${cycles}${napMin || ''})" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>${ticks}${now}</svg>`;
+}
+
+/** التوصية الذكية: عدد الدورات الأنسب بناءً على تقييماتك السابقة */
+function recommendedCycles() {
+  const fresh = {}; S.sleep.log.filter(l => l.rating === 'fresh' && l.cycles >= 3).forEach(l => fresh[l.cycles] = (fresh[l.cycles] || 0) + 1);
+  const best = Object.entries(fresh).sort((a, b) => b[1] - a[1])[0];
+  return best && best[1] >= 2 ? +best[0] : 5;
+}
+
+let selectedPlan = null; // {cycles, wakeAt, bedAt, nap}
+let lastPlanRender = '';
+function buildPlans() {
+  const { latency, cycleLen, mode } = S.sleep;
+  const rec = recommendedCycles();
+  const plans = [];
+  for (const c of [3, 4, 5, 6]) {
+    const sleepMin = latency + c * cycleLen;
+    let bedAt, wakeAt;
+    if (mode === 'now') { bedAt = Date.now(); wakeAt = bedAt + sleepMin * MIN; }
+    else if (mode === 'bed') { bedAt = nextOccurrence(S.sleep.bedTime, 60); wakeAt = bedAt + sleepMin * MIN; }
+    else { wakeAt = nextOccurrence(S.sleep.wakeTime); bedAt = wakeAt - sleepMin * MIN; }
+    plans.push({ cycles: c, bedAt, wakeAt, rec: c === rec, past: mode === 'wake' && bedAt < Date.now() - 5 * MIN });
+  }
+  return plans;
+}
+function renderPlans(force = false) {
+  const plans = buildPlans();
+  const sig = S.sleep.mode + plans.map(p => fmtTime(p.wakeAt) + fmtTime(p.bedAt)).join() + (selectedPlan?.cycles ?? '') + (selectedPlan?.nap ?? '');
+  if (!force && sig === lastPlanRender) return;
+  lastPlanRender = sig;
+  const grid = $('#plan-grid'); grid.textContent = '';
+  const descs = { 3: 'طوارئ', 4: 'الحد الأدنى', 5: 'الموصى به', 6: 'تعافٍ كامل' };
+  plans.forEach(p => {
+    const el = document.createElement('button');
+    el.className = 'plan' + (selectedPlan && !selectedPlan.nap && selectedPlan.cycles === p.cycles ? ' selected' : '') + (p.past ? ' disabled' : '');
+    const showTime = S.sleep.mode === 'wake' ? p.bedAt : p.wakeAt;
+    el.innerHTML = `${p.rec ? `<span class="tag">${p.cycles !== 5 ? 'الأنسب لك ✨' : 'موصى به'}</span>` : ''}
+      <div class="meta">${p.cycles} دورات · ${fmtHM(p.wakeAt - p.bedAt)}</div>
+      <div class="time tabular">${fmtTime(showTime)}</div>
+      <div class="desc">${S.sleep.mode === 'wake' ? (p.past ? 'فات الموعد' : 'اذهب للسرير') : descs[p.cycles]}</div>`;
+    el.onclick = () => selectPlan({ ...p, nap: null });
+    el.ondblclick = () => { selectPlan({ ...p, nap: null }); confirmAlarm(); };
+    grid.append(el);
+  });
+  // تحديث الخطة المختارة بأحدث الأوقات
+  if (selectedPlan && !selectedPlan.nap) { const fresh = plans.find(p => p.cycles === selectedPlan.cycles); if (fresh) selectedPlan = { ...fresh, nap: null }; }
+  renderPreview();
+}
+function selectPlan(p) { selectedPlan = p; lastPlanRender = ''; renderPlans(true); }
+function renderPreview() {
+  const btn = $('#set-alarm-btn');
+  if (!selectedPlan) {
+    const c = recommendedCycles();
+    $('#hypno-preview').innerHTML = hypnoSVG(c);
+    $('#preview-meta').textContent = `مثال: ${c} دورات`;
+    btn.disabled = true; btn.textContent = '⏰ اختر خطة أولاً'; return;
+  }
+  const p = selectedPlan;
+  if (p.nap) {
+    $('#hypno-preview').innerHTML = p.nap === 20 ? hypnoSVG(0, { napMin: 20 + S.sleep.latency * 0 }) : hypnoSVG(1);
+    $('#benefit-box').innerHTML = p.nap === 20 ? BENEFITS.nap20 : BENEFITS[1];
+  } else {
+    $('#hypno-preview').innerHTML = hypnoSVG(p.cycles);
+    $('#benefit-box').innerHTML = BENEFITS[p.cycles] || '';
+  }
+  $('#preview-meta').textContent = `من ${fmtTime(p.bedAt)} إلى ${fmtTime(p.wakeAt)}`;
+  btn.disabled = !!p.past;
+  btn.textContent = `⏰ تفعيل المنبه — ${fmtTime(p.wakeAt)}`;
+}
+function napPlan(kind) {
+  const mins = kind === '20' ? 20 : S.sleep.latency + S.sleep.cycleLen;
+  return { nap: kind === '20' ? 20 : 'cycle', cycles: kind === '20' ? 0 : 1, bedAt: Date.now(), wakeAt: Date.now() + mins * MIN };
+}
+function confirmAlarm() {
+  if (!selectedPlan || selectedPlan.past) return;
+  let p = selectedPlan;
+  if (p.nap) p = napPlan(p.nap === 20 ? '20' : 'cycle');
+  else if (S.sleep.mode === 'now') p = buildPlans().find(x => x.cycles === p.cycles);
+  setAlarm({ wakeAt: p.wakeAt, bedAt: p.bedAt, cycles: p.cycles, nap: !!p.nap, label: p.nap ? 'قيلولة' : `${p.cycles} دورات` });
+}
+function setAlarm({ wakeAt, bedAt, cycles, nap = false, label }) {
+  if (wakeAt <= Date.now() + 30000) return toast('هذا الموعد قريب جداً أو فات', { icon: '⚠️' });
+  Sound.ensure();
+  S.sleep.alarm = { wakeAt, bedAt: bedAt ?? Date.now(), setAt: Date.now(), cycles, nap, label,
+                    bedReminded: !(bedAt && bedAt - 15 * MIN > Date.now()), lastPre: 0 };
+  save(); syncWakeLock(); renderAlarm();
+  toast(`تم ضبط المنبه على ${fmtTime(wakeAt)} (بعد ${fmtHM(wakeAt - Date.now())})`, { icon: '⏰' });
+  if ('Notification' in window && Notification.permission === 'default') setTimeout(() => toast('فعّل الإشعارات ليصلك التنبيه حتى لو كنت في تبويب آخر', { action: 'تفعيل', onAction: requestNotif, icon: '🔔', ms: 7000 }), 800);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function cancelAlarm(silent) {
+  S.sleep.alarm = null; save(); syncWakeLock(); renderAlarm(); toggleDim(false);
+  if (!silent) toast('تم إلغاء المنبه', { icon: '🗑' });
+}
+function renderAlarm() {
+  const a = S.sleep.alarm, card = $('#alarm-card');
+  card.hidden = !a;
+  if (!a) return;
+  $('#alarm-title').textContent = `موعد الاستيقاظ: ${fmtTime(a.wakeAt)}`;
+  const bedFuture = a.bedAt > Date.now() + MIN;
+  $('#alarm-sub').textContent = `${a.label}${bedFuture ? ` · موعد النوم المقترح ${fmtTime(a.bedAt)}` : ''}${S.sleep.smartWake && !a.nap ? ` · إيقاظ تدريجي قبل ${S.sleep.smartWake} د` : ''}`;
+  tickAlarm();
+}
+function tickAlarm() {
+  const a = S.sleep.alarm; if (!a) return;
+  const now = Date.now(), left = a.wakeAt - now;
+  if (left <= 0) return ringAlarm();
+  // تذكير بموعد النوم
+  if (!a.bedReminded && now >= a.bedAt - 15 * MIN) {
+    a.bedReminded = true; save();
+    toast(`بعد 15 دقيقة موعد نومك (${fmtTime(a.bedAt)}) — ابدأ بالتهيؤ وأبعد الشاشات`, { icon: '🌙', ms: 9000 });
+    notify('🌙 اقترب موعد النوم', `اذهب للسرير الساعة ${fmtTime(a.bedAt)} لتستيقظ ${fmtTime(a.wakeAt)} مرتاحاً`, { force: true, tag: 'bed' });
+    Sound.play('zen', 0.25);
+  }
+  // الإيقاظ التدريجي (محاكاة شروق الشمس + نغمة خافتة)
+  const pre = S.sleep.smartWake * MIN;
+  const sun = pre && !a.nap && left <= pre ? 1 - left / pre : 0;
+  $('#dim').style.setProperty('--sun', sun.toFixed(3));
+  if (sun > 0) {
+    $('#dim-sub').textContent = '🌅 بدأ الإيقاظ التدريجي…';
+    if (now - (a.lastPre || 0) > 45000) { a.lastPre = now; Sound.play(S.sleep.tone, 0.05 + sun * 0.25); }
+  }
+  const sleptFrom = Math.max(a.bedAt, a.setAt);
+  const total = a.wakeAt - sleptFrom, elapsed = now - sleptFrom;
+  $('#alarm-countdown').textContent = fmtHMS(left);
+  $('#alarm-bar').style.width = (clamp(elapsed / total, 0, 1) * 100).toFixed(1) + '%';
+  if (elapsed < 0) { $('#alarm-cycle').textContent = `يبدأ النوم بعد ${fmtHM(-elapsed)}`; $('#alarm-stage').textContent = 'استعد للنوم: إضاءة خافتة، بلا كافيين أو شاشات'; }
+  else if (a.nap && a.cycles === 0) { $('#alarm-cycle').textContent = 'قيلولة طاقة'; $('#alarm-stage').textContent = 'نوم خفيف — ستستيقظ قبل الدخول في النوم العميق'; }
+  else { const st = stageAt(elapsed / MIN, a.cycles || 1); $('#alarm-cycle').textContent = st.cycle ? `الدورة ${st.cycle} من ${a.cycles}` : 'قبل الدورة الأولى'; $('#alarm-stage').textContent = st.name; }
+  // تحديث الرسم كل دقيقة
+  const minuteSig = Math.floor(now / MIN);
+  if (a._sig !== minuteSig) {
+    a._sig = minuteSig;
+    const totalMin = total / MIN;
+    $('#alarm-hypno').innerHTML = a.nap && a.cycles === 0 ? hypnoSVG(0, { napMin: totalMin, nowMin: elapsed / MIN })
+      : (Math.abs(totalMin - (S.sleep.latency + a.cycles * S.sleep.cycleLen)) < 3 ? hypnoSVG(a.cycles, { nowMin: elapsed / MIN }) : '');
+  }
+}
+
+/* ===== الرنين ===== */
+let ringTimer = null, ringStep = 0, mathAnswer = null;
+function ringAlarm() {
+  const a = S.sleep.alarm; if (!a || $('#ring-dialog').open) return;
+  toggleDim(false);
+  ringStep = 0;
+  $('#ring-title').textContent = a.nap ? 'انتهت قيلولتك! ⚡' : 'صباح الخير! انتهت دورات نومك';
+  $('#ring-msg').textContent = a.nap ? 'قم الآن قبل الدخول في النوم العميق لتحافظ على نشاطك.' : 'أنت الآن في نهاية دورة — أفضل لحظة لتستيقظ بنشاط ودون خمول.';
+  $('#snooze-cycle').textContent = `💤 دورة كاملة (${S.sleep.cycleLen} د)`;
+  const lock = S.sleep.mathLock;
+  $('#math-box').hidden = !lock;
+  if (lock) {
+    const x = 12 + Math.floor(Math.random() * 38), y = 7 + Math.floor(Math.random() * 30);
+    mathAnswer = x + y; $('#math-q').textContent = `${x} + ${y} =`; $('#math-a').value = '';
+  }
+  $('#ring-dialog').showModal();
+  if (lock) setTimeout(() => $('#math-a').focus(), 100);
+  notify('⏰ حان وقت الاستيقاظ!', a.nap ? 'انتهت القيلولة' : `استيقظ الآن — ${a.label}`, { force: true, tag: 'alarm' });
+  escalate();
+}
+function escalate() {
+  if (!$('#ring-dialog').open) return;
+  const vol = Math.min(1, 0.25 + ringStep * 0.1);
+  Sound.play(S.sleep.tone, Math.max(vol, S.sleep.volume * vol));
+  vibrate([300, 150, 300]);
+  $('#esc-text').textContent = ringStep >= 7 ? `أقصى إيقاظ (${Math.round(vol * 100)}%)` : `${Math.round(vol * 100)}%`;
+  $('#esc-bar').style.width = vol * 100 + '%';
+  ringStep++;
+  ringTimer = setTimeout(escalate, Math.max(1100, 2600 - ringStep * 200));
+}
+function stopRingSound() { clearTimeout(ringTimer); ringTimer = null; if ($('#ring-dialog').open) $('#ring-dialog').close(); }
+let pendingLog = null;
+function stopAlarm() {
+  if (S.sleep.mathLock && Number($('#math-a').value) !== mathAnswer) {
+    const box = $('#math-box'); box.classList.remove('shake'); void box.offsetWidth; box.classList.add('shake');
+    $('#math-a').focus(); return;
+  }
+  const a = S.sleep.alarm;
+  stopRingSound();
+  if (a) {
+    const start = Math.max(a.bedAt, a.setAt);
+    pendingLog = { date: dayKey(), start, end: Date.now(), cycles: a.cycles, nap: a.nap, rating: null, latency: S.sleep.latency, cycleLen: S.sleep.cycleLen };
+    S.sleep.log.push(pendingLog);
+  }
+  cancelAlarm(true);
+  $('#rate-dialog').showModal();
+}
+function snooze(mins) {
+  const a = S.sleep.alarm; stopRingSound();
+  if (!a) return;
+  a.wakeAt = Date.now() + mins * MIN; a.label = `غفوة ${mins} د`; a.nap = true; a.cycles = mins >= S.sleep.cycleLen ? 1 : 0; a.lastPre = 0; a._sig = null;
+  save(); renderAlarm();
+  toast(`غفوة حتى ${fmtTime(a.wakeAt)}`, { icon: '💤' });
+}
+function rateWake(r) {
+  $('#rate-dialog').close();
+  const entry = pendingLog || S.sleep.log[S.sleep.log.length - 1];
+  if (!entry) return;
+  entry.rating = r; pendingLog = null; save();
+  if (r === 'fresh') toast('رائع! سيعطي التطبيق أولوية لهذه الخطة في توصياته 🌟', { icon: '😃' });
+  else if (r === 'groggy') {
+    const recentGroggy = S.sleep.log.slice(-5).filter(l => l.rating === 'groggy' && !l.nap).length;
+    if (recentGroggy >= 2 && S.sleep.cycleLen < 110) {
+      toast(`استيقظت مرهقاً ${recentGroggy} مرات مؤخراً — قد تكون دورتك أطول من ${S.sleep.cycleLen} د`, { action: `جرّب ${S.sleep.cycleLen + 5} د`, ms: 10000, icon: '🧠',
+        onAction: () => { S.sleep.cycleLen += 5; syncSleepInputs(); save(); renderPlans(true); toast('تم تعديل طول دورتك الشخصية', { icon: '✅' }); } });
+    } else {
+      toast('قد تحتاج وقتاً أطول للغفو. زيادة مدة الغفو تحسّن توقيت الاستيقاظ', { action: '+5 د للغفو', ms: 9000, icon: '🧠',
+        onAction: () => { S.sleep.latency = Math.min(60, S.sleep.latency + 5); syncSleepInputs(); save(); renderPlans(true); } });
+    }
+  } else toast('تم حفظ التقييم 👍', { icon: '🙂' });
+}
+function toggleDim(on) {
+  $('#dim').hidden = !on;
+  if (on) { updateClocks(); if (document.documentElement.requestFullscreen && !document.fullscreenElement) document.documentElement.requestFullscreen().catch(() => {}); }
+  else if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+}
+function syncSleepInputs() {
+  $('#latency').value = S.sleep.latency; $('#smart-wake').value = S.sleep.smartWake;
+  $('#cycle-len').value = S.sleep.cycleLen; $('#cycle-len-val').textContent = S.sleep.cycleLen + ' د'; setRangeFill($('#cycle-len'));
+  $('#math-lock').checked = S.sleep.mathLock;
+  $('#volume').value = Math.round(S.sleep.volume * 100); $('#volume-val').textContent = Math.round(S.sleep.volume * 100) + '%'; setRangeFill($('#volume'));
+  $('#bed-time').value = S.sleep.bedTime; $('#wake-time').value = S.sleep.wakeTime;
+  $$('#tone-grid .tone').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.tone === S.sleep.tone)));
+  $$('#sleep-mode button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.mode === S.sleep.mode)));
+  $('#mode-bed-row').hidden = S.sleep.mode !== 'bed';
+  $('#mode-wake-row').hidden = S.sleep.mode !== 'wake';
+}
+
+/* ================= التركيز (بومودورو) ================= */
+const F = () => S.focus;
+const fDay = (k = dayKey()) => (F().days[k] ||= { sessions: 0, minutes: 0 });
+const modeMins = m => m === 'work' ? F().work : m === 'short' ? F().short : F().long;
+const MODE_UI = {
+  work: { label: 'تركيز', color: 'var(--emerald)' },
+  short: { label: 'راحة قصيرة', color: 'var(--amber)' },
+  long: { label: 'راحة طويلة', color: 'var(--violet)' }
+};
+const BREAK_TIPS = [
+  { ico: '👀', text: 'قاعدة 20-20-20: انظر لشيء يبعد 6 أمتار لمدة 20 ثانية لإراحة عينيك.' },
+  { ico: '🧘', text: 'تنفّس بعمق: شهيق 4 ثوانٍ، حبس 4، زفير 6 — يخفّض التوتر فوراً.' },
+  { ico: '🚶', text: 'قم وتحرك قليلاً أو تمدد؛ الحركة تنشّط الدورة الدموية للدماغ.' },
+  { ico: '💧', text: 'اشرب كوب ماء الآن لتحافظ على تركيزك في الجلسة القادمة.', water: true },
+  { ico: '🌤️', text: 'تعرّض لضوء طبيعي أو افتح النافذة — يعزز اليقظة وينظّم ساعتك البيولوجية.' },
+  { ico: '📵', text: 'تجنب تصفح الهاتف في الراحة؛ دع دماغك يستريح فعلاً.' }
+];
+function focusRemaining() { const f = F(); return f.running ? Math.max(0, Math.ceil((f.endAt - Date.now()) / 1000)) : f.remainingSec; }
+function setFocusMode(mode) { const f = F(); f.mode = mode; f.totalSec = modeMins(mode) * 60; f.remainingSec = f.totalSec; f.running = false; f.endAt = null; }
+function startFocus() {
+  const f = F(); Sound.ensure();
+  if (f.remainingSec <= 0) setFocusMode(f.mode);
+  f.running = true; f.endAt = Date.now() + f.remainingSec * 1000;
+  immersiveDismissed = false;
+  if (f.mode === 'work') $('#break-tip').hidden = true;
+  save(); syncWakeLock(); renderFocus();
+}
+function pauseFocus() { const f = F(); f.remainingSec = focusRemaining(); f.running = false; f.endAt = null; save(); syncWakeLock(); renderFocus(); }
+function toggleFocus() { F().running ? pauseFocus() : startFocus(); }
+function resetFocus() { const f = F(); setFocusMode('work'); $('#break-tip').hidden = true; save(); syncWakeLock(); renderFocus(); }
+function skipFocus() { completePhase(true); }
+function completePhase(skipped = false) {
+  const f = F(), wasMode = f.mode;
+  if (wasMode === 'work') {
+    const elapsedMin = Math.round((f.totalSec - focusRemaining()) / 60);
+    if (!skipped || elapsedMin >= Math.min(10, f.work)) {
+      const d = fDay(); d.sessions++; d.minutes += skipped ? elapsedMin : f.work; f.setCount++;
+      if (d.sessions === f.goal) setTimeout(() => {
+        $('#congrats-title').textContent = 'تهانينا الحارة! 🎉';
+        $('#congrats-text').textContent = `أنجزت ${d.sessions} جلسات تركيز (${d.minutes} دقيقة) وأثمرت شجرتك بالكامل اليوم!`;
+        $('#congrats-dialog').showModal(); Sound.play('chime', 0.8);
+      }, 400);
+    }
+    const next = f.setCount > 0 && f.setCount % f.every === 0 ? 'long' : 'short';
+    setFocusMode(next);
+    showBreakTip(next);
+    if (!skipped) { Sound.play('crystal', 0.9); vibrate([200, 100, 200]); notify('✅ انتهت جلسة التركيز', `وقت ${MODE_UI[next].label} (${modeMins(next)} د)`, { tag: 'focus' }); }
+    if (f.autoBreak && !skipped) startFocus();
+  } else {
+    setFocusMode('work');
+    $('#break-tip').hidden = true;
+    if (!skipped) { Sound.play('sunrise', 0.8); notify('🌳 انتهت الراحة', 'جاهز لجلسة تركيز جديدة؟', { tag: 'focus' }); toast('انتهت الراحة — جاهز لجلسة جديدة؟', { action: 'ابدأ', onAction: startFocus, icon: '🌳' }); }
+    if (f.autoFocus && !skipped) startFocus();
+  }
+  save(); syncWakeLock(); renderFocus();
+}
+function showBreakTip(mode) {
+  const tip = waterPctNow() < 0.9 && Math.random() < 0.5 ? BREAK_TIPS[3] : pick(BREAK_TIPS);
+  $('#break-tip-ico').textContent = tip.ico;
+  $('#break-tip-text').textContent = (mode === 'long' ? 'راحة طويلة مستحقة! ' : '') + tip.text;
+  const act = $('#break-tip-action'); act.hidden = !tip.water;
+  act.textContent = '+250 مل'; act.onclick = () => { addWater(250); act.hidden = true; };
+  $('#break-tip').hidden = false;
+}
+const TREES = [
+  { t: 'بذرة الطموح 🌱', svg: '<ellipse cx="50" cy="84" rx="28" ry="8" fill="rgba(52,211,153,.18)"/><path d="M50 80 Q45 60 50 42 Q55 60 50 80" fill="#34d399"/><circle cx="50" cy="40" r="7" fill="#6ee7b7"/>' },
+  { t: 'برعم صاعد 🌿', svg: '<ellipse cx="50" cy="84" rx="28" ry="8" fill="rgba(52,211,153,.18)"/><path d="M50 82 L50 34" stroke="#059669" stroke-width="5" stroke-linecap="round"/><path d="M50 56 Q34 48 33 34 Q49 42 50 56" fill="#34d399"/><path d="M50 46 Q66 38 67 24 Q51 32 50 46" fill="#6ee7b7"/>' },
+  { t: 'شتلة شابة 🌳', svg: '<ellipse cx="50" cy="84" rx="30" ry="8" fill="rgba(52,211,153,.18)"/><path d="M50 82 L50 30" stroke="#059669" stroke-width="7" stroke-linecap="round"/><circle cx="50" cy="32" r="20" fill="#34d399"/><circle cx="37" cy="40" r="12" fill="#6ee7b7"/><circle cx="63" cy="40" r="12" fill="#6ee7b7"/>' },
+  { t: 'شجرة وارفة 🌲', svg: '<ellipse cx="50" cy="85" rx="32" ry="8" fill="rgba(52,211,153,.2)"/><path d="M50 84 L50 26" stroke="#047857" stroke-width="8" stroke-linecap="round"/><circle cx="50" cy="30" r="24" fill="#059669"/><circle cx="33" cy="40" r="15" fill="#34d399"/><circle cx="67" cy="40" r="15" fill="#34d399"/><circle cx="50" cy="20" r="12" fill="#6ee7b7"/>' },
+  { t: 'شجرة مثمرة ذهبية 🍎✨', svg: '<ellipse cx="50" cy="85" rx="32" ry="8" fill="rgba(251,191,36,.22)"/><path d="M50 84 L50 24" stroke="#047857" stroke-width="8" stroke-linecap="round"/><circle cx="50" cy="28" r="26" fill="#059669"/><circle cx="32" cy="38" r="16" fill="#34d399"/><circle cx="68" cy="38" r="16" fill="#34d399"/><circle cx="42" cy="22" r="5" fill="#fbbf24"/><circle cx="60" cy="26" r="5" fill="#fbbf24"/><circle cx="50" cy="40" r="5" fill="#fbbf24"/><circle cx="34" cy="40" r="4" fill="#f87171"/><circle cx="68" cy="42" r="4" fill="#f87171"/>' }
+];
+function focusStreak() {
+  let n = 0; const d = new Date();
+  if (!(F().days[dayKey(d)]?.sessions)) d.setDate(d.getDate() - 1);
+  while (F().days[dayKey(d)]?.sessions > 0) { n++; d.setDate(d.getDate() - 1); }
+  return n;
+}
+let immersiveDismissed = false;
+function updateImmersive() {
+  const on = F().running && F().immersive && !immersiveDismissed && S.tab === 'focus';
+  document.body.classList.toggle('immersive', on);
+  const name = (F().sessionName || '').trim();
+  $('#imm-session').hidden = !on || !name;
+  $('#imm-session').textContent = name ? `🎯 ${name}` : '';
+}
+let lastTreeStage = -1;
+function renderFocus() {
+  const f = F(), rem = focusRemaining(), d = fDay();
+  const ui = MODE_UI[f.mode];
+  $('#timer').textContent = fmtMS(rem);
+  const frac = f.totalSec ? 1 - rem / f.totalSec : 0;
+  const ring = $('#ring-fg'); ring.style.stroke = ui.color; ring.style.strokeDashoffset = (339.292 * (1 - frac)).toFixed(2);
+  const badge = $('#mode-badge'); badge.textContent = `${ui.label} · ${modeMins(f.mode)} د`; badge.style.setProperty('--accent', ui.color);
+  const sb = $('#focus-start');
+  sb.textContent = f.running ? '⏸ إيقاف مؤقت' : (rem < f.totalSec ? '▶ استئناف' : (f.mode === 'work' ? '▶ ابدأ التركيز' : '▶ ابدأ الراحة'));
+  sb.classList.toggle('amber', f.running); sb.classList.toggle('emerald', !f.running);
+  // النقاط والشجرة
+  const dots = $('#cycle-dots'); const goal = f.goal;
+  if (dots.childElementCount !== goal || dots.dataset.done !== String(d.sessions)) {
+    dots.textContent = ''; for (let i = 1; i <= goal; i++) { const el = document.createElement('i'); if (i <= d.sessions) el.className = 'on'; dots.append(el); }
+    dots.dataset.done = d.sessions;
+  }
+  const stage = d.sessions >= goal ? 4 : Math.min(3, Math.floor((d.sessions / goal) * 4));
+  if (stage !== lastTreeStage) {
+    lastTreeStage = stage;
+    $('#tree').innerHTML = `<svg viewBox="0 0 100 100">${TREES[stage].svg}</svg>`;
+    $('#tree-title').textContent = TREES[stage].t;
+  }
+  $$('#presets button').forEach(b => b.setAttribute('aria-pressed', String(+b.dataset.min === f.work)));
+  $('#today-sessions').textContent = `${d.sessions}/${goal}`;
+  $('#today-minutes').textContent = d.minutes;
+  $('#focus-streak').textContent = `${focusStreak()}🔥`;
+  updateImmersive();
+}
+function tickFocus() {
+  const f = F(); if (!f.running) return;
+  if (focusRemaining() <= 0) completePhase(false); else renderFocus();
+}
+function syncFocusInputs() {
+  const f = F();
+  $('#set-work').value = f.work; $('#set-short').value = f.short; $('#set-long').value = f.long; $('#set-every').value = f.every; $('#set-goal').value = f.goal;
+  $('#auto-break').checked = f.autoBreak; $('#auto-focus').checked = f.autoFocus; $('#immersive').checked = f.immersive;
+  $('#session-name').value = f.sessionName || '';
+}
+function applyFocusSettings() {
+  const f = F();
+  f.work = clamp(Math.round(num($('#set-work').value, 25)), 5, 120);
+  f.short = clamp(Math.round(num($('#set-short').value, 5)), 1, 30);
+  f.long = clamp(Math.round(num($('#set-long').value, 15)), 5, 60);
+  f.every = clamp(Math.round(num($('#set-every').value, 4)), 2, 8);
+  f.goal = clamp(Math.round(num($('#set-goal').value, 8)), 1, 20);
+  f.autoBreak = $('#auto-break').checked; f.autoFocus = $('#auto-focus').checked; f.immersive = $('#immersive').checked;
+  if (!f.running && f.remainingSec === f.totalSec) setFocusMode(f.mode); // تطبيق المدة الجديدة إن لم تبدأ بعد
+  syncFocusInputs(); lastTreeStage = -1; save(); renderFocus();
+}
+
+/* ================= الماء ================= */
+const W = () => S.water;
+const SESSION_START = Date.now(); // لا تذكير فوري عند فتح الصفحة
+const wDay = (k = dayKey()) => (W().days[k] ||= { entries: [], celebrated: false });
+const waterGoal = () => Math.max(1500, round50(W().weight * 35 * W().activity + (W().hot ? 500 : 0)));
+const waterTotal = (k = dayKey()) => (W().days[k]?.entries || []).reduce((s, e) => s + (Number(e.ml) || 0), 0);
+const waterPctNow = () => waterTotal() / waterGoal();
+function activeWindow() {
+  const s = parseHM(W().start), e = parseHM(W().end), n = minutesOfDay();
+  const len = e > s ? e - s : 24 * 60 - s + e;
+  const pos = e > s ? n - s : (n >= s ? n - s : n + 24 * 60 - s);
+  return { inside: pos >= 0 && pos <= len, frac: clamp(pos / len, 0, 1), len, pos };
+}
+function addWater(ml) {
+  ml = Math.round(num(ml, 0)); if (ml < 10 || ml > 3000) return toast('أدخل كمية بين 10 و3000 مل', { icon: '⚠️' });
+  const day = wDay(); day.entries.push({ t: Date.now(), ml });
+  W().snoozeUntil = 0;
+  Sound.play('ding', 0.35);
+  const total = waterTotal(), goal = waterGoal();
+  if (total >= goal && !day.celebrated) {
+    day.celebrated = true;
+    setTimeout(() => { $('#congrats-title').textContent = 'هدف الترطيب مكتمل! 💧'; $('#congrats-text').textContent = `شربت ${(total / 1000).toFixed(1)} لتر اليوم — دماغك ممتن لك!`; $('#congrats-dialog').showModal(); Sound.play('chime', 0.7); }, 300);
+  } else toast(`+${ml} مل · المتبقي ${Math.max(0, goal - total)} مل`, { icon: '💧', ms: 2500, action: 'تراجع', onAction: undoWater });
+  save(); renderWater(); renderFocusKpisLight();
+}
+function undoWater() { const day = wDay(); if (!day.entries.length) return; const e = day.entries.pop(); if (waterTotal() < waterGoal()) day.celebrated = false; save(); renderWater(); toast(`تم حذف ${e.ml} مل`, { icon: '↶', ms: 2000 }); }
+function removeWaterEntry(t) { const day = wDay(); day.entries = day.entries.filter(e => e.t !== t); if (waterTotal() < waterGoal()) day.celebrated = false; save(); renderWater(); }
+function nextReminderAt() {
+  const w = W(); if (!w.interval) return null;
+  const entries = wDay().entries; const lastDrink = entries.length ? entries[entries.length - 1].t : 0;
+  const s = parseHM(w.start); const startToday = new Date(); startToday.setHours(Math.floor(s / 60), s % 60, 0, 0);
+  let base = Math.max(lastDrink, w.lastReminderAt || 0, startToday.getTime(), SESSION_START);
+  let at = Math.max(base + w.interval * MIN, w.snoozeUntil || 0);
+  return at;
+}
+function suggestedSip() {
+  const remaining = Math.max(0, waterGoal() - waterTotal());
+  const win = activeWindow(); const leftMin = Math.max(30, win.len - win.pos);
+  const slots = Math.max(1, Math.floor(leftMin / (W().interval || 60)));
+  return clamp(round50(remaining / slots), 150, 500);
+}
+function renderWater() {
+  const goal = waterGoal(), total = waterTotal(), pct = total / goal;
+  $('#water-goal-badge').textContent = `الهدف: ${(goal / 1000).toFixed(1)} لتر`;
+  $('#water-wave').style.setProperty('--lvl', clamp(pct * 100, 0, 100) + '%');
+  $('#water-pct').textContent = Math.round(pct * 100) + '%';
+  $('#water-amount').textContent = `${total} / ${goal} مل`;
+  // مؤشر الوتيرة الذكي
+  const win = activeWindow(), pace = $('#water-pace');
+  if (total >= goal) { pace.className = 'pace ok'; pace.textContent = '🎉 أحسنت! حققت هدف اليوم'; }
+  else if (!win.inside) { pace.className = 'pace idle'; pace.textContent = `🌙 خارج ساعات النشاط (${fmtTime(new Date(nextOccurrence(W().start)))} – ${fmtTime(new Date(nextOccurrence(W().end)))})`; }
+  else {
+    const expected = round50(goal * win.frac), diff = total - expected;
+    if (diff >= -150) { pace.className = 'pace ok'; pace.textContent = diff > 150 ? `🚀 متقدّم على خطتك بـ ${diff} مل` : '✅ على المسار الصحيح تماماً'; }
+    else { pace.className = 'pace warn'; pace.textContent = `⚠️ متأخر بـ ${-diff} مل — اشرب ~${suggestedSip()} مل الآن`; }
+  }
+  const nr = nextReminderAt();
+  $('#next-reminder').textContent = !W().interval ? '🔕 التذكير متوقف' : (S.sleep.alarm ? '🔕 التذكير صامت أثناء منبه النوم' : `⏰ التذكير القادم: ${fmtTime(new Date(nr))}`);
+  const log = $('#water-log'); log.textContent = '';
+  const entries = wDay().entries.slice().reverse();
+  $('#water-count').textContent = entries.length ? `${entries.length} مرات` : '';
+  if (!entries.length) { log.innerHTML = '<div class="empty">لم تسجّل أي كمية اليوم بعد — ابدأ بكوب ماء 💧</div>'; }
+  entries.forEach(e => {
+    const row = document.createElement('div'); row.className = 'log-item';
+    const a = document.createElement('span'); a.textContent = `💧 ${Number(e.ml)} مل`;
+    const b = document.createElement('span'); b.className = 'muted xs'; b.textContent = fmtTime(new Date(e.t));
+    const del = document.createElement('button'); del.textContent = '✕'; del.title = 'حذف'; del.setAttribute('aria-label', 'حذف'); del.onclick = () => removeWaterEntry(e.t);
+    const right = document.createElement('span'); right.className = 'row'; right.append(b, del);
+    row.append(a, right); log.append(row);
+  });
+}
+function tickWater() {
+  const w = W(); if (!w.interval || S.sleep.alarm || $('#water-dialog').open || $('#ring-dialog').open) return;
+  if (!activeWindow().inside || waterTotal() >= waterGoal()) return;
+  const at = nextReminderAt(); if (at && Date.now() >= at) {
+    w.lastReminderAt = Date.now(); w.snoozeUntil = 0; save();
+    const sip = suggestedSip();
+    $('#water-dialog-text').textContent = `المتبقي ${waterGoal() - waterTotal()} مل. اشرب ~${sip} مل الآن لتبقى على المسار وتحافظ على تركيزك.`;
+    $('#water-dialog-drink').textContent = `✅ شربت ${sip} مل`; $('#water-dialog-drink').dataset.ml = sip;
+    if (!document.querySelector('dialog[open]')) $('#water-dialog').showModal();
+    Sound.play('ding', 0.4);
+    notify('💧 وقت رشفة ماء', `اشرب ~${sip} مل الآن`, { tag: 'water' });
+    renderWater();
+  }
+}
+function syncWaterInputs() {
+  const w = W();
+  $('#w-weight').value = w.weight; $('#w-activity').value = String(w.activity); $('#w-hot').checked = w.hot;
+  $('#w-interval').value = String(w.interval); $('#w-start').value = w.start; $('#w-end').value = w.end;
+}
+function applyWaterSettings() {
+  const w = W();
+  w.weight = clamp(num($('#w-weight').value, 70), 30, 200); w.activity = num($('#w-activity').value, 1.25); w.hot = $('#w-hot').checked;
+  w.interval = parseInt($('#w-interval').value, 10) || 0; w.start = $('#w-start').value || '08:00'; w.end = $('#w-end').value || '23:00';
+  save(); renderWater();
+}
+function renderFocusKpisLight() { if (S.tab === 'stats') renderStats(); }
+
+/* ================= الإحصاءات ================= */
+const weekdayFmt = new Intl.DateTimeFormat('ar', { weekday: 'short' });
+function lastDays(n = 7) { const out = []; for (let i = n - 1; i >= 0; i--) { const d = new Date(); d.setDate(d.getDate() - i); out.push(d); } return out; }
+function barChart(data, { color, goal, unit = '' }) {
+  const W2 = 600, H2 = 180, T = 22, B = 26, P = 14, max = Math.max(goal || 0, ...data.map(d => d.v), 1) * 1.1;
+  const bw = (W2 - P * 2) / data.length;
+  const y = v => T + (1 - v / max) * (H2 - T - B);
+  let s = '';
+  if (goal) s += `<line x1="${P}" x2="${W2 - P}" y1="${y(goal)}" y2="${y(goal)}" stroke="${color}" stroke-dasharray="5 5" opacity=".6"/><text x="${W2 - P}" y="${y(goal) - 5}" text-anchor="end">الهدف ${goal}${unit}</text>`;
+  data.forEach((d, i) => {
+    const x = P + i * bw + bw * 0.2, w = bw * 0.6, top = y(d.v), h = Math.max(2, H2 - B - top);
+    const hit = goal && d.v >= goal;
+    s += `<rect x="${x.toFixed(1)}" y="${(H2 - B - h).toFixed(1)}" width="${w.toFixed(1)}" height="${h.toFixed(1)}" rx="8" fill="${color}" opacity="${d.today ? 1 : hit ? .85 : .5}"><title>${d.v}${unit}</title></rect>`;
+    if (d.v) s += `<text x="${(x + w / 2).toFixed(1)}" y="${(H2 - B - h - 6).toFixed(1)}" text-anchor="middle">${d.v}</text>`;
+    s += `<text x="${(x + w / 2).toFixed(1)}" y="${H2 - 8}" text-anchor="middle" style="${d.today ? 'font-weight:900;fill:var(--text)' : ''}">${d.label}</text>`;
+  });
+  return `<svg class="chart" viewBox="0 0 ${W2} ${H2}" role="img" style="direction:ltr">${s}</svg>`;
+}
+function waterStreak() {
+  let n = 0; const d = new Date(); const goal = waterGoal();
+  if (waterTotal(dayKey(d)) < goal) d.setDate(d.getDate() - 1);
+  while (waterTotal(dayKey(d)) >= goal) { n++; d.setDate(d.getDate() - 1); }
+  return n;
+}
+const RATE_UI = { fresh: '😃 منتعش', ok: '🙂 عادي', groggy: '🥱 مرهق' };
+function renderStats() {
+  const days = lastDays(7).reverse(); // RTL: الأحدث على اليمين
+  const today = dayKey();
+  const fData = days.map(d => ({ label: weekdayFmt.format(d), v: F().days[dayKey(d)]?.minutes || 0, today: dayKey(d) === today })).reverse();
+  const wData = days.map(d => ({ label: weekdayFmt.format(d), v: waterTotal(dayKey(d)), today: dayKey(d) === today })).reverse();
+  $('#chart-focus').innerHTML = barChart(fData, { color: 'var(--emerald)', goal: F().goal * F().work, unit: 'د' });
+  $('#chart-water').innerHTML = barChart(wData, { color: 'var(--sky)', goal: waterGoal() });
+  $('#kpi-focus').textContent = `${fDay().minutes} د`;
+  $('#kpi-water').textContent = `${Math.round(waterPctNow() * 100)}%`;
+  $('#kpi-streak').textContent = `${waterStreak()} 💧`;
+  const nights = S.sleep.log.filter(l => !l.nap && l.end - l.start >= 60 * MIN); // استبعاد الجلسات القصيرة جداً
+  const last = nights[nights.length - 1];
+  $('#kpi-sleep').textContent = last ? fmtHM(last.end - last.start) : '—';
+  // التحليل الذكي
+  const box = $('#sleep-insight');
+  if (!nights.length) box.textContent = 'لا توجد بيانات بعد. استخدم المنبه وقيّم استيقاظك ليتعلم التطبيق ما يناسبك.';
+  else {
+    const recent = nights.slice(-7);
+    const avg = recent.reduce((s, l) => s + (l.end - l.start), 0) / recent.length;
+    const rated = recent.filter(l => l.rating);
+    const fresh = rated.filter(l => l.rating === 'fresh').length;
+    const rec = recommendedCycles();
+    const debt = Math.max(0, 7.5 * 60 * MIN * recent.length - recent.reduce((s, l) => s + (l.end - l.start), 0));
+    box.innerHTML = '';
+    const lines = [
+      `<b>متوسط نومك:</b> ${fmtHM(avg)} خلال آخر ${recent.length} ليالٍ.`,
+      rated.length ? `<b>جودة الاستيقاظ:</b> استيقظت منتعشاً في ${fresh} من ${rated.length} مرات (${Math.round(fresh / rated.length * 100)}%).` : '<b>نصيحة:</b> قيّم استيقاظك بعد كل منبه ليتعلم التطبيق ما يناسبك.',
+      `<b>الخطة الأنسب لك حالياً:</b> ${rec} دورات بطول ${S.sleep.cycleLen} د.`,
+      debt > 60 * MIN ? `<b>دين النوم:</b> ينقصك نحو ${fmtHM(debt)} مقارنة بـ 7.5 ساعات يومياً — جرّب النوم أبكر بدورة واحدة.` : '<b>دين النوم:</b> ممتاز، نومك متوازن 👏'
+    ];
+    box.innerHTML = lines.join('<br>');
+  }
+  const logEl = $('#sleep-log'); logEl.textContent = '';
+  S.sleep.log.slice(-8).reverse().forEach(l => {
+    const row = document.createElement('div'); row.className = 'log-item';
+    const a = document.createElement('span');
+    a.textContent = `${l.nap ? '⚡ قيلولة' : '🛌 ' + (Number(l.cycles) || 0) + ' دورات'} · ${fmtHM(l.end - l.start)}`;
+    const b = document.createElement('span'); b.className = 'xs muted';
+    b.textContent = `${new Date(l.start).toLocaleDateString(LOCALE, { weekday: 'short', day: 'numeric', month: 'short' })} · ${RATE_UI[l.rating] || 'بدون تقييم'}`;
+    row.append(a, b); logEl.append(row);
+  });
+}
+function exportData() {
+  if (NATIVE) {
+    const p = NATIVE.saveFile(`iqaa-backup-${dayKey()}.json`, JSON.stringify({ app: 'iqaa', version: 2, exportedAt: new Date().toISOString(), data: S }, null, 2));
+    return toast(p ? `تم الحفظ في: ${p}` : 'تعذّر حفظ الملف', { icon: p ? '⬇' : '⚠️', ms: 6000 });
+  }
+  const blob = new Blob([JSON.stringify({ app: 'iqaa', version: 2, exportedAt: new Date().toISOString(), data: S }, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `iqaa-backup-${dayKey()}.json`; a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  toast('تم تصدير نسخة احتياطية', { icon: '⬇' });
+}
+async function importData(file) {
+  try {
+    const parsed = JSON.parse(await file.text());
+    const data = parsed?.data && parsed.app === 'iqaa' ? parsed.data : parsed;
+    if (!data || typeof data !== 'object' || !(data.sleep || data.focus || data.water)) throw new Error('bad');
+    const fresh = deepMerge(DEFAULTS(), data);
+    fresh.sleep.alarm = null; fresh.focus.running = false; fresh.focus.endAt = null;
+    Object.assign(S, fresh); save(); initUI(); toast('تم استيراد البيانات بنجاح', { icon: '✅' });
+  } catch (e) { toast('الملف غير صالح', { icon: '⚠️' }); }
+}
+
+/* ================= التوصية الذكية الحيّة ================= */
+function computeInsight() {
+  const h = new Date().getHours(), a = S.sleep.alarm;
+  if (a) return { ico: '🌙', title: `منبهك مضبوط على ${fmtTime(a.wakeAt)}`, text: `متبقٍّ ${fmtHM(a.wakeAt - Date.now())}. فعّل وضع الليل لإطفاء الإضاءة المزعجة.`, action: 'وضع الليل', fn: () => toggleDim(true) };
+  if (F().running) return { ico: MODE_UI[F().mode] === MODE_UI.work ? '🎯' : '☕', title: `${MODE_UI[F().mode].label} جارٍ`, text: `متبقٍّ ${fmtMS(focusRemaining())}${F().sessionName ? ' · ' + F().sessionName : ''}`, action: 'عرض', fn: () => switchTab('focus') };
+  const win = activeWindow(), total = waterTotal(), goal = waterGoal();
+  if (win.inside && total < goal && goal * win.frac - total > 400) return { ico: '💧', title: 'ترطيبك متأخر عن الخطة', text: `ينقصك ${round50(goal * win.frac - total)} مل عن المعدل المفترض الآن — الجفاف الخفيف يقلل التركيز.`, action: `+${suggestedSip()} مل`, fn: () => addWater(suggestedSip()) };
+  if (h >= 21 || h < 3) { const c = recommendedCycles(), wake = Date.now() + (S.sleep.latency + c * S.sleep.cycleLen) * MIN; return { ico: '🛌', title: 'وقت مثالي للتهيؤ للنوم', text: `إن نمت الآن ستستيقظ ${fmtTime(wake)} بعد ${c} دورات كاملة. خفّف الإضاءة وأبعد الشاشات.`, action: 'اضبط المنبه', fn: () => { switchTab('sleep'); S.sleep.mode = 'now'; syncSleepInputs(); selectPlan({ ...buildPlans().find(p => p.cycles === c), nap: null }); } }; }
+  if (h >= 3 && h < 5) return { ico: '🌌', title: 'ساعات متأخرة جداً', text: 'إن احتجت النوم الآن، فدورتان أو ثلاث أفضل من الاستيقاظ وسط نوم عميق.', action: 'خطط نومي', fn: () => switchTab('sleep') };
+  if (h >= 13 && h < 16) return { ico: '⚡', title: 'نافذة القيلولة الذهبية', text: 'انخفاض الطاقة بعد الظهر طبيعي؛ قيلولة 20 دقيقة تعيد شحن انتباهك. وتجنّب الكافيين بعد الثانية ظهراً.', action: 'قيلولة 20 د', fn: () => { switchTab('sleep'); selectPlan(napPlan('20')); } };
+  const d = fDay();
+  if (h >= 8 && h < 21 && d.sessions < F().goal) return { ico: '🌳', title: d.sessions ? `أنجزت ${d.sessions} من ${F().goal} جلسات اليوم` : 'ابدأ أول جلسة تركيز اليوم', text: h < 12 ? 'ذروة الانتباه لدى معظم الناس في الصباح — استغلها للمهام الصعبة.' : 'جلسة واحدة أخرى تنمّي شجرتك وتقرّبك من هدفك.', action: 'ابدأ جلسة', fn: () => { switchTab('focus'); if (!F().running) startFocus(); } };
+  if (h >= 5 && h < 12) return { ico: '☀️', title: 'صباح الخير!', text: 'ابدأ يومك بكوب ماء وتعرّض لضوء الشمس 10 دقائق لضبط ساعتك البيولوجية.', action: '+250 مل', fn: () => addWater(250) };
+  return { ico: '✨', title: 'يومك متوازن', text: 'استمر في الحفاظ على إيقاعك: نوم منتظم، تركيز عميق، وترطيب كافٍ.' };
+}
+let insightFn = null, lastInsightSig = '';
+function renderInsight() {
+  const i = computeInsight();
+  const sig = i.title + i.text + (i.action || '');
+  if (sig === lastInsightSig) return; lastInsightSig = sig;
+  $('#insight-ico').textContent = i.ico; $('#insight-title').textContent = i.title; $('#insight-text').textContent = i.text;
+  const b = $('#insight-action'); b.hidden = !i.action; b.textContent = i.action || ''; insightFn = i.fn || null;
+}
+
+/* ================= الساعة والعنوان ================= */
+let hijriFmt = null; try { hijriFmt = new Intl.DateTimeFormat('ar-SA-u-ca-islamic-umalqura-nu-latn', { day: 'numeric', month: 'long' }); } catch (e) {}
+const dateFmt = new Intl.DateTimeFormat(LOCALE, { weekday: 'long', day: 'numeric', month: 'long' });
+function updateClocks() {
+  const now = new Date();
+  $('#live-clock').textContent = clockFmt.format(now);
+  $('#dim-clock').textContent = fmtTime(now);
+  const h = now.getHours();
+  $('#greeting').textContent = (h >= 5 && h < 12 ? 'صباح الخير ☀️' : h < 18 && h >= 12 ? 'نهارك سعيد 🌤️' : 'مساء الخير 🌙') + ' — كل شيء محفوظ على جهازك';
+  if (now.getSeconds() === 0 || !$('#live-date').textContent) {
+    let t = dateFmt.format(now); if (hijriFmt) { try { t += ' · ' + hijriFmt.format(now).replace(/\s?هـ$/, '') + ' هـ'; } catch (e) {} }
+    $('#live-date').textContent = t;
+  }
+}
+function updateTitle() {
+  if (S.sleep.alarm) document.title = `⏰ ${fmtHMS(S.sleep.alarm.wakeAt - Date.now())} — إيقاع`;
+  else if (F().running) document.title = `${F().mode === 'work' ? '🎯' : '☕'} ${fmtMS(focusRemaining())} — إيقاع`;
+  else document.title = 'إيقاع — منبه دورات النوم وبومودورو الذكي';
+}
+
+/* ================= الحلقة الرئيسية ================= */
+let lastDay = dayKey(), slowTick = 0;
+function tick() {
+  updateClocks();
+  tickAlarm();
+  tickFocus();
+  tickWater();
+  updateTitle();
+  if (++slowTick % 15 === 0) {
+    renderPlans();
+    renderInsight();
+    if (S.tab === 'water') renderWater();
+    if (dayKey() !== lastDay) { lastDay = dayKey(); lastTreeStage = -1; renderFocus(); renderWater(); }
+  }
+}
+
+/* ================= ربط الأحداث ================= */
+function bindEvents() {
+  $$('.tabs [role=tab]').forEach(b => b.addEventListener('click', () => switchTab(b.dataset.tab)));
+  $('.tabs').addEventListener('keydown', e => {
+    if (!['ArrowLeft', 'ArrowRight'].includes(e.key)) return;
+    const i = TABS.indexOf(S.tab) + (e.key === 'ArrowLeft' ? 1 : -1);
+    const t = TABS[(i + TABS.length) % TABS.length]; switchTab(t); $('#tab-' + t).focus();
+  });
+  $('#theme-btn').onclick = () => { S.theme = { auto: 'dark', dark: 'light', light: 'auto' }[S.theme]; applyTheme(); save(); };
+  mq.addEventListener?.('change', applyTheme);
+  $('#notif-btn').onclick = requestNotif;
+  $('#insight-action').onclick = () => insightFn?.();
+
+  // النوم
+  $$('#sleep-mode button').forEach(b => b.onclick = () => { S.sleep.mode = b.dataset.mode; selectedPlan = null; syncSleepInputs(); save(); renderPlans(true); });
+  $('#bed-time').onchange = e => { S.sleep.bedTime = e.target.value || '23:00'; selectedPlan = null; save(); renderPlans(true); };
+  $('#wake-time').onchange = e => { S.sleep.wakeTime = e.target.value || '07:00'; selectedPlan = null; save(); renderPlans(true); };
+  $$('#nap-row [data-nap]').forEach(b => b.onclick = () => selectPlan(napPlan(b.dataset.nap)));
+  $('#set-alarm-btn').onclick = confirmAlarm;
+  $('#cancel-alarm-btn').onclick = () => cancelAlarm();
+  $('#dim-btn').onclick = () => toggleDim(true);
+  $('#dim').onclick = () => toggleDim(false);
+  $('#latency').onchange = e => { S.sleep.latency = clamp(Math.round(num(e.target.value, 15)), 0, 60); syncSleepInputs(); save(); renderPlans(true); };
+  $('#smart-wake').onchange = e => { S.sleep.smartWake = +e.target.value; save(); renderAlarm(); };
+  $('#cycle-len').oninput = e => { S.sleep.cycleLen = +e.target.value; $('#cycle-len-val').textContent = S.sleep.cycleLen + ' د'; setRangeFill(e.target); save(); renderPlans(true); };
+  $('#math-lock').onchange = e => { S.sleep.mathLock = e.target.checked; save(); };
+  $$('#tone-grid .tone').forEach(b => b.onclick = () => { S.sleep.tone = b.dataset.tone; syncSleepInputs(); save(); Sound.play(S.sleep.tone); });
+  $('#preview-tone').onclick = () => Sound.play(S.sleep.tone);
+  $('#volume').oninput = e => { S.sleep.volume = e.target.value / 100; $('#volume-val').textContent = e.target.value + '%'; setRangeFill(e.target); save(); };
+  $('#volume').onchange = () => Sound.play(S.sleep.tone);
+  $('#stop-ring').onclick = stopAlarm;
+  $('#math-a').addEventListener('keydown', e => { if (e.key === 'Enter') stopAlarm(); });
+  $('#snooze-short').onclick = () => snooze(20);
+  $('#snooze-cycle').onclick = () => snooze(S.sleep.cycleLen);
+  $('#ring-dialog').addEventListener('cancel', e => e.preventDefault()); // لا يُغلق بزر Esc
+  $$('#rate-dialog [data-rate]').forEach(b => b.onclick = () => rateWake(b.dataset.rate));
+
+  // التركيز
+  $('#focus-start').onclick = toggleFocus;
+  $('#focus-reset').onclick = resetFocus;
+  $('#focus-skip').onclick = skipFocus;
+  $('#exit-imm').onclick = () => { immersiveDismissed = true; updateImmersive(); };
+  $$('#presets button').forEach(b => b.onclick = () => {
+    if (F().running) return toast('أوقف المؤقت أولاً لتغيير المدة', { icon: '⏸' });
+    F().work = +b.dataset.min; $('#set-work').value = F().work; setFocusMode('work'); save(); renderFocus();
+  });
+  ['set-work', 'set-short', 'set-long', 'set-every', 'set-goal', 'auto-break', 'auto-focus', 'immersive'].forEach(id => $('#' + id).addEventListener('change', applyFocusSettings));
+  $('#session-name').addEventListener('input', e => { F().sessionName = e.target.value.slice(0, 60); save(); });
+
+  // الماء
+  $$('[data-ml]').forEach(b => { if (b.id !== 'water-dialog-drink') b.onclick = () => addWater(+b.dataset.ml); });
+  $('#add-custom').onclick = () => { addWater($('#custom-ml').value); $('#custom-ml').value = ''; };
+  $('#custom-ml').addEventListener('keydown', e => { if (e.key === 'Enter') $('#add-custom').click(); });
+  $('#undo-water').onclick = undoWater;
+  ['w-weight', 'w-activity', 'w-hot', 'w-interval', 'w-start', 'w-end'].forEach(id => $('#' + id).addEventListener('change', applyWaterSettings));
+  $('#water-reset').onclick = () => { if (confirm('مسح سجل الماء لليوم؟')) { W().days[dayKey()] = { entries: [], celebrated: false }; save(); renderWater(); } };
+  $('#water-dialog-drink').onclick = () => { $('#water-dialog').close(); addWater(+$('#water-dialog-drink').dataset.ml || 250); };
+  $('#water-dialog-snooze').onclick = () => { W().snoozeUntil = Date.now() + 15 * MIN; save(); $('#water-dialog').close(); renderWater(); toast('سأذكرك بعد 15 دقيقة', { icon: '⏰' }); };
+
+  // الإحصاءات
+  $('#export-btn').onclick = exportData;
+  $('#import-file').onchange = e => { const f = e.target.files?.[0]; if (f) importData(f); e.target.value = ''; };
+  $('#reset-all').onclick = () => { if (confirm('سيتم حذف كل بياناتك وإعداداتك نهائياً. متابعة؟')) { localStorage.removeItem(STORE_KEY); Object.assign(S, DEFAULTS()); save(); initUI(); toast('تم مسح البيانات', { icon: '🗑' }); } };
+
+  // إغلاق النوافذ العامة
+  $$('dialog [data-close]').forEach(b => b.onclick = () => b.closest('dialog').close());
+
+  // اختصارات لوحة المفاتيح
+  document.addEventListener('keydown', e => {
+    if (e.target.matches('input, select, textarea') || e.ctrlKey || e.metaKey || e.altKey) return;
+    if ($('#ring-dialog').open) return;
+    if (e.key === 'Escape') { if (!$('#dim').hidden) toggleDim(false); else if (document.body.classList.contains('immersive')) { immersiveDismissed = true; updateImmersive(); } return; }
+    if (['1', '2', '3', '4'].includes(e.key)) switchTab(TABS[+e.key - 1]);
+    else if (e.code === 'Space' && S.tab === 'focus') { e.preventDefault(); toggleFocus(); }
+    else if (e.key.toLowerCase() === 'd' || e.key === 'ي') { if (S.sleep.alarm) toggleDim($('#dim').hidden); }
+  });
+
+  // العودة للتبويب: إعادة حساب فورية + استعادة قفل الشاشة
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') { tick(); renderPlans(); renderInsight(); syncWakeLock(); } });
+  // أول تفاعل يفتح سياق الصوت (سياسة المتصفحات)
+  ['pointerdown', 'keydown'].forEach(ev => document.addEventListener(ev, () => Sound.ensure(), { once: true, passive: true }));
+  window.addEventListener('beforeunload', e => { try { localStorage.setItem(STORE_KEY, JSON.stringify(S)); } catch (_) {} if (S.sleep.alarm && !NATIVE) { e.preventDefault(); e.returnValue = ''; } });
+}
+
+/* ================= التهيئة ================= */
+function initUI() {
+  if (NATIVE) { document.body.classList.add('native'); const h = $('#alarm-hint'); if (h) h.textContent = '✅ المنبه مجدول في نظام أندرويد — سيرن حتى لو أغلقت التطبيق أو قفلت الشاشة.'; }
+  for (const k of Object.keys(nativeSig)) delete nativeSig[k];
+  pruneOld(); applyTheme(); updateNotifBtn();
+  syncSleepInputs(); syncFocusInputs(); syncWaterInputs();
+  if (!F().running && F().remainingSec > F().totalSec) setFocusMode(F().mode);
+  selectedPlan = null; lastPlanRender = ''; lastTreeStage = -1; lastInsightSig = '';
+  renderPlans(true); renderAlarm(); renderFocus(); renderWater(); renderInsight();
+  switchTab(S.tab, { silent: true });
+  syncWakeLock(); tick(); syncNative();
+}
+bindEvents();
+initUI();
+setInterval(tick, 1000);
+window.tick = tick; window.switchTab = switchTab; window.S = S;
+
+</script>
+</body>
+</html>
